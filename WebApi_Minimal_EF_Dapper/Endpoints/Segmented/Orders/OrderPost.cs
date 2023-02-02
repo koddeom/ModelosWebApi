@@ -14,7 +14,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Orders
 
         //----------------------------------------------------------------------
         //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
-        
+
         [SwaggerOperation(Tags = new[] { "Segmented Order" })]
         public static async Task<IResult> Action(OrderRequestDTO orderRequestDTO,
                                                  HttpContext http,

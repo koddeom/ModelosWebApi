@@ -13,7 +13,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
     {
         private readonly ILogger<CategoryController> _logger;
         private readonly ApplicationDbContext _dbContext;
-        
+
         public CategoryController(ILogger<CategoryController> logger,
                                  ApplicationDbContext dbContext)
         {
@@ -25,7 +25,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
         //EndPoints
         //------------------------------------------------------------------------------------
 
-        [HttpGet,Route("{id:guid}")]
+        [HttpGet, Route("{id:guid}")]
         public IActionResult CategoryGet([FromRoute] Guid id)
         {
             var Categorys = _dbContext.Categories
@@ -42,10 +42,9 @@ namespace WebApi_Controller_EF_Dapper.Controllers
             return new ObjectResult(categoryResponseDTO);
         }
 
-        [HttpGet,Route("")]
+        [HttpGet, Route("")]
         public IActionResult CategorysGetAll()
         {
-
             //teste
             var pathBase = HttpContext.Request.PathBase;
 
@@ -63,7 +62,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
             return new ObjectResult(categoriesResponseDTO);
         }
 
-        [HttpPost,Route("")]
+        [HttpPost, Route("")]
         public async Task<IActionResult> CategoryPost(CategoryRequestDTO categoryRequestDTO)
         {
             //Usuario fixo, mas  poderia vir de um identity
@@ -85,8 +84,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
             return new ObjectResult(Results.Created($"/category/{category.Id}", category.Id));
         }
 
-
-        [HttpPut,Route("{id:guid}")]
+        [HttpPut, Route("{id:guid}")]
         public IActionResult CategoryPut([FromRoute] Guid id,
                                          CategoryRequestDTO categoryRequestDTO)
         {
@@ -115,7 +113,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
             return new ObjectResult(Results.Ok());
         }
 
-        [HttpDelete,Route("{id:guid}")]
+        [HttpDelete, Route("{id:guid}")]
         public IActionResult CategoryDelete([FromRoute] Guid id)
         {
             //Recupero o produto do banco

@@ -1,18 +1,17 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Serilog.Sinks.MSSqlServer;
 using Serilog;
+using Serilog.Sinks.MSSqlServer;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text.Json;
-using WebApi_Minimal_EF_Dapper.Business.Interface;
 using WebApi_Minimal_EF_Dapper.Business;
+using WebApi_Minimal_EF_Dapper.Business.Interface;
 using WebApi_Minimal_EF_Dapper.Domain.Database;
 using WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Categories;
 using WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Orders;
 using WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Products;
 using WebApi_Minimal_EF_Dapper.Endpoints.Unified;
-using Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -12,7 +12,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Products
 
         //-----------------------------------------------------------------------
         //Observacao: IResult está trabalhando com uma operacao sincrona
-        
+
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
         public static IResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
         {

@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using WebApi_Minimal_EF_Dapper.Business.Interface;
 using WebApi_Minimal_EF_Dapper.Business.Models;
 
 namespace WebApi_Minimal_EF_Dapper.Business

@@ -11,7 +11,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Products
         public static Delegate Handle => Action;
 
         private readonly IServiceAllProductsSold _serviceAllProductsSold;
-        
+
         //GetAllSold (Caso especial aceita injecao de dependencia de interface pois a classe é publica)
         public ProductSoldGet(IServiceAllProductsSold serviceAllProductsSold)
         {

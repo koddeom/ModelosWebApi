@@ -13,7 +13,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Categories
 
         //-----------------------------------------------------------------------
         //Observacao: IResult está trabalhando com uma operacao sincrona
-        
+
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
         public static IResult Action(ApplicationDbContext dbContext)
         {

@@ -28,7 +28,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
         //------------------------------------------------------------------------------------
         //EndPoints
         //------------------------------------------------------------------------------------
-        [HttpGet,Route("{id:guid}")]
+        [HttpGet, Route("{id:guid}")]
         public IActionResult ProductGet([FromRoute] Guid id)
         {
             var products = _dbContext.Products
@@ -48,7 +48,7 @@ namespace WebApi_Controller_EF_Dapper.Controllers
             return new ObjectResult(productResponseDTO);
         }
 
-        [HttpGet,Route("")]
+        [HttpGet, Route("")]
         public IActionResult ProductsGetAll()
         {
             var products = _dbContext.Products

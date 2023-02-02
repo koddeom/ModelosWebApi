@@ -6,8 +6,6 @@ using System.Text.Json;
 using WebApi_Controller_EF_Dapper.Business;
 using WebApi_Controller_EF_Dapper.Domain.Database;
 
-
-
 //==================================================================================================
 //Serviços
 //==================================================================================================
@@ -21,7 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
 {
-   c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); // Resolve conflito de nomes de endpoits no swagger
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); // Resolve conflito de nomes de endpoits no swagger
 });
 
 //--------------------------------------------------------------------------------------------------
@@ -53,7 +51,6 @@ builder.Services.AddEndpointsApiExplorer();
 //Meus servicos personalizados da aplicacao
 //--------------------------------------------------------------------------------------------------
 builder.Services.AddScoped<ServiceAllProductsSold>();
-
 
 //==================================================================================================
 //Application

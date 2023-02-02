@@ -14,7 +14,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Segmented.Categories
 
         //----------------------------------------------------------------------
         //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
-        
+
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
         public static async Task<IResult> Action(CategoryRequestDTO categoryRequestDTO,
                                                  HttpContext http,

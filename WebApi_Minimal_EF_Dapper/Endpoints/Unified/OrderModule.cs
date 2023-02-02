@@ -29,7 +29,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Unified
                                                             productsResponseDTO
                                                             );
                 return Results.Ok(orderResponseDTO);
-            }).WithTags("Unified Order"); 
+            }).WithTags("Unified Order");
 
             //Post
             app.MapPost("unified/Order", async (OrderRequestDTO orderRequestDTO,
@@ -67,7 +67,7 @@ namespace WebApi_Minimal_EF_Dapper.Endpoints.Unified
                 await dbContext.SaveChangesAsync();
 
                 return Results.Created($"/orders/{order.Id}", order.Id);
-            }).WithTags("Unified Order"); 
+            }).WithTags("Unified Order");
         }
     }
 }
