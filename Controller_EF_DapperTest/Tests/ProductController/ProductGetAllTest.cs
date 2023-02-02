@@ -1,7 +1,7 @@
-namespace Controller_EF_DapperTest
+namespace Controller_EF_DapperTest.Tests.ProductController
 {
     [TestClass]
-    public class UnitTest1
+    public class ProductGetAllTest
     {
         [TestMethod]
         public void TestMethod1()
