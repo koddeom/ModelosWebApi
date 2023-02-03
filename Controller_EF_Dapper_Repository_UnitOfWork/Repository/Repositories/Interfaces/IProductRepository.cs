@@ -5,6 +5,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories.In
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
-
+        //Metodos especificos
+        IEnumerable<Product> GetAllSolds();
     }
 }

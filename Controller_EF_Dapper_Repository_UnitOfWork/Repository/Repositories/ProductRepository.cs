@@ -9,7 +9,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories
     {
         public ProductRepository(ApplicationDbContext context) : base(context)
         {
-        
+        }
+
+        public IEnumerable<Product> GetAllSolds()
+        {
+            throw new NotImplementedException();
         }
     }
 }

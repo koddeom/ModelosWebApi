@@ -1,5 +1,9 @@
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Business;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
+using Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories;
+using Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Serilog;
@@ -51,6 +55,13 @@ builder.Services.AddEndpointsApiExplorer();
 //Meus servicos personalizados da aplicacao
 //--------------------------------------------------------------------------------------------------
 builder.Services.AddScoped<ServiceAllProductsSold>();
+
+//Repositorios (Repository DDD)
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 //==================================================================================================
 //Application

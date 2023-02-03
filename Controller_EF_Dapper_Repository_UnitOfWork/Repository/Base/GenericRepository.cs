@@ -1,6 +1,5 @@
 ﻿using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
 using Microsoft.EntityFrameworkCore;
-using System;
 using static Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base.IGenericRepository;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
