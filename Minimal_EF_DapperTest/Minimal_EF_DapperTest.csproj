@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebApi_Minimal_EF_Dapper\WebApi_Minimal_EF_Dapper.csproj" />
+    <ProjectReference Include="..\Minimal_EF_Dapper\Minimal_EF_Dapper.csproj" />
   </ItemGroup>
 
 </Project>

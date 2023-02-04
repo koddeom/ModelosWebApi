@@ -19,7 +19,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork
 
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
             Products = products ?? throw new ArgumentNullException(nameof(products));
             Categories = categories ?? throw new ArgumentNullException(nameof(categories));
             Orders = orders ?? throw new ArgumentNullException(nameof(orders));

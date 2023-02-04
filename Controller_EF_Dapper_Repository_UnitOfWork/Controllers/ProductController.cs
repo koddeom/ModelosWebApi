@@ -1,5 +1,7 @@
-﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
-using Controller_EF_Dapper_Repository_UnityOfWork.Business;
+﻿using AutoMapper;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO;
@@ -14,15 +16,21 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly ApplicationDbContext _dbContext;
-        private readonly ServiceAllProductsSold _serviceAllProductsSold;
+
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public ProductController(ILogger<ProductController> logger,
                                  ApplicationDbContext dbContext,
-                                 ServiceAllProductsSold serviceAllProductsSold)
-        {
-            _logger = logger;
-            _dbContext = dbContext;
-            _serviceAllProductsSold = serviceAllProductsSold;
+                                 IMapper mapper,                     
+                                 IUnitOfWork unitOfWork)
+                                 {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         //------------------------------------------------------------------------------------
@@ -48,9 +56,21 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             return new ObjectResult(productResponseDTO);
         }
 
-        [HttpGet, Route("")]
-        public IActionResult ProductsGetAll()
+        [HttpGet, Route("/mapper")]
+        public async Task<IEnumerable<ProductResponseDTO>> ProductGetMapper()
         {
+            var products = await _unitOfWork.Products.GetAll();
+
+            var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+
+            return productResponseDTO;
+        }
+
+        [HttpGet, Route("")]
+        public async Task<IActionResult> ProductsGetAllAsync()
+        {
+            //return (IActionResult)await _unitOfWork.Products.GetAll();
+
             var products = _dbContext.Products
                                   .AsNoTracking()
                                   .Include(p => p.Category)
@@ -71,8 +91,9 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         [HttpGet, Route("{id:guid}/solds")]
         public IActionResult ProductSoldGet()
         {
-            var result = _serviceAllProductsSold.Execute();
-            return new ObjectResult(result);
+            //var result = _serviceAllProductsSold.Execute();
+            //return new ObjectResult(result);
+            return null;
         }
 
         [HttpPost, Route("")]
