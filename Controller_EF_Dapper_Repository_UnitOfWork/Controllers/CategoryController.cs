@@ -1,9 +1,9 @@
-﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
-using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
+﻿using AutoMapper;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Categories.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 {
@@ -12,13 +12,15 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ILogger<CategoryController> _logger;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public CategoryController(ILogger<CategoryController> logger,
-                                 ApplicationDbContext dbContext)
+                                  IMapper mapper,
+                                  IUnitOfWork unitOfWork)
         {
-            _logger = logger;
-            _dbContext = dbContext;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         //------------------------------------------------------------------------------------
@@ -26,40 +28,21 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         //------------------------------------------------------------------------------------
 
         [HttpGet, Route("{id:guid}")]
-        public IActionResult CategoryGet([FromRoute] Guid id)
+        public async Task<IActionResult> CategoryGet([FromRoute] Guid id)
         {
-            var Categorys = _dbContext.Categories
-                         .AsNoTracking()
-                         .ToList();
-
-            var categoryResponseDTO = Categorys.Where(p => p.Id == id)
-                                               .Select(p => new CategoryResponseDTO(
-                                                       p.Id,
-                                                       p.Name,
-                                                       p.Active
-                                                     ));
+            var categories = await _unitOfWork.Categories.Get(id);
+            var categoryResponseDTO = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
 
             return new ObjectResult(categoryResponseDTO);
         }
 
         [HttpGet, Route("")]
-        public IActionResult CategorysGetAll()
+        public async Task<IEnumerable<IActionResult>> CategorysGetAllAsync()
         {
-            //teste
-            var pathBase = HttpContext.Request.PathBase;
+            var categories = await _unitOfWork.Categories.GetAll();
+            var categoriesResponseDTO = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
 
-            var categories = _dbContext.Categories
-                          .AsNoTracking()
-                          .ToList();
-
-            var categoriesResponseDTO = categories.Select(c => new CategoryResponseDTO
-            (
-                c.Id,
-                c.Name,
-                c.Active
-            ));
-
-            return new ObjectResult(categoriesResponseDTO);
+            return (IEnumerable<IActionResult>)categoriesResponseDTO;
         }
 
         [HttpPost, Route("")]
@@ -68,115 +51,65 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             //Usuario fixo, mas  poderia vir de um identity
             string user = "doe joe";
 
-            var category = new Category();
+            Category category = _mapper.Map<Category>(categoryRequestDTO);
 
-            category.AddCategory(categoryRequestDTO.Name,
-                                  user);
+            category.CreatedBy = user;
+            category.CreatedOn = DateTime.Now;
 
             if (!category.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()));
             }
+            else
+            {
+                await _unitOfWork.Categories.Add(category);
+                var categoryResponseDTO = _mapper.Map<CategoryResponseDTO>(category);
 
-            await _dbContext.Categories.AddAsync(category);
-            _dbContext.SaveChanges();
-
-            return new ObjectResult(Results.Created($"/category/{category.Id}", category.Id));
+                return new ObjectResult(Results.Created($"/categories/{category.Id}", category.Id));
+            }
         }
 
         [HttpPut, Route("{id:guid}")]
-        public IActionResult CategoryPut([FromRoute] Guid id,
+        public async Task<IActionResult> CategoryPutAsync([FromRoute] Guid id,
                                          CategoryRequestDTO categoryRequestDTO)
         {
             //Usuario fixo, mas  poderia vir de um identity
             string user = "doe joe";
 
-            var category = _dbContext.Categories.FirstOrDefault(c => c.Id == id);
+            //Recupero a categoria de forma sincrona
+            Category category = await _unitOfWork.Categories.Get(id);
 
-            if (category == null)
-            {
-                return new ObjectResult(Results.NotFound());
-            }
+            //nao encontrado
+            if (category == null) return new ObjectResult(Results.NotFound());
 
-            category.EditInfo(categoryRequestDTO.Name,
-                              categoryRequestDTO.Active,
-                              user);
+            category.Name = categoryRequestDTO.Name;
+            category.Active = true;
+            //-----------------------------------------
+            category.EditedBy = user;
+            category.EditedOn = DateTime.Now;
 
             if (!category.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(category.Notifications
-                                                         .ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()));
             }
-
-            _dbContext.SaveChanges();
-
-            return new ObjectResult(Results.Ok());
+            else
+            {
+                _unitOfWork.Categories.Update(category);
+                return new ObjectResult(Results.Ok());
+            }
         }
 
         [HttpDelete, Route("{id:guid}")]
-        public IActionResult CategoryDelete([FromRoute] Guid id)
+        public async Task<IActionResult> CategoryDeleteAsync([FromRoute] Guid id)
         {
-            //Recupero o produto do banco
-            var category = _dbContext.Categories.FirstOrDefault(c => c.Id == id);
+            //Recupero a categoria
+            var category = await _unitOfWork.Categories.Get(id);
 
-            if (category == null)
-            {
-                return new ObjectResult(Results.NotFound());
-            }
+            //nao encontrado
+            if (category == null) return new ObjectResult(Results.NotFound());
 
-            _dbContext.Categories.Remove(category);
-            _dbContext.SaveChanges();
-
+            _unitOfWork.Categories.Delete(category);
             return new ObjectResult(Results.Ok());
         }
     }
 }
-
-//[HttpPost]
-//public IActionResult Create([FromBody] TodoItem item)
-//{
-//    if (item == null)
-//    {
-//        return BadRequest();
-//    }
-//    TodoItems.Add(item);
-//    return CreatedAtRoute("GetTodo", new { id = item.Key }, item);
-//}
-
-//[HttpPut("{id}")]
-//public IActionResult Update(string id, [FromBody] TodoItem item)
-//{
-//    if (item == null || item.Key != id)
-//    {
-//        return BadRequest();
-//    }
-//    var todo = TodoItems.Find(id);
-//    if (todo == null)
-//    {
-//        return NotFound();
-//    }
-//    TodoItems.Update(item);
-//    return new NoContentResult();
-//}
-
-//[HttpDelete("{id}")]
-//public void Delete(string id)
-//{
-//    TodoItems.Remove(id);
-//}
-
-//public IEnumerable<TodoItem> GetAll()
-//{
-//    return TodoItems.GetAll();
-//}
-
-//[HttpGet("{id}", Name = "GetTodo")]
-//public IActionResult GetById(string id)
-//{
-//    var item = TodoItems.Find(id);
-//    if (item == null)
-//    {
-//        return NotFound();
-//    }
-//    return new ObjectResult(item);
-//}

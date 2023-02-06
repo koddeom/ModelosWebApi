@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
-using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 {
@@ -19,13 +19,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         //private readonly ApplicationDbContext _dbContext;
 
         public ProductController(ILogger<ProductController> logger,
-                                 ApplicationDbContext dbContext,
                                  IMapper mapper,
                                  IUnitOfWork unitOfWork)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            //_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -36,19 +33,20 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         [HttpGet, Route("{id:guid}")]
         public async Task<IActionResult> ProductGet([FromRoute] Guid id)
         {
-            var products = await _unitOfWork.Products.Get(id);
-            var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+            var product = await _unitOfWork.Products.Get(id);
+            var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
 
-            return (IActionResult)productResponseDTO;
+            return new ObjectResult(productResponseDTO);
+           
         }
 
         [HttpGet, Route("")]
         public async Task<IEnumerable<IActionResult>> ProductGetAll()
         {
             var products = await _unitOfWork.Products.GetAll();
-            var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
 
-            return (IEnumerable<IActionResult>)productResponseDTO;
+            return (IEnumerable<IActionResult>)productsResponseDTO;
         }
 
         [HttpGet, Route("{/solds")]
