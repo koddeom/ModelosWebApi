@@ -8,22 +8,22 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.P
         // usar private no set restringe o acesso
         // aos metodos somente pelo construtor da classe
 
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public Decimal Price { get; private set; }
-        public bool Active { get; private set; } = true;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Decimal Price { get; set; }
+        public bool Active { get; set; } = true;
 
         //Categorias -------------------------------------------------
-        public Guid CategoryId { get; private set; }
+        public Guid CategoryId { get; set; }
 
-        public Category Category { get; private set; }
+        public Category Category { get; set; }
 
         //Pedidos ----------------------------------------------------
-        public ICollection<Order> Orders { get; private set; }
+        public ICollection<Order> Orders { get; set; }
 
         public Product()
         {
-            // use uum construtor vazio sempre que operar com o ef
+            // use um construtor vazio sempre que operar com o ef
         }
 
         private void Validate()
@@ -41,45 +41,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.P
             //.IsNotNullOrEmpty(EditedBy, "EditedBy", "O usuario alterador é obrigatório");
 
             AddNotifications(contract);
-        }
-
-        public void AddProduct(string name,
-                               string description,
-                               Decimal price,
-                               bool active,
-                               Category category,
-                               string createdBy)
-
-        {
-            Name = name;
-            Description = description;
-            Category = category;
-            Price = price;
-            Active = active;
-
-            //Audity ------------------------------------
-            CreatedBy = createdBy;
-            CreatedOn = DateTime.Now;
-
-            Validate();
-        }
-
-        public void EditProduct(string name,
-                                Decimal price,
-                                bool active,
-                                Category category,
-                                string editedBy)
-        {
-            Name = name;
-            Price = price;
-            Category = category;
-            Active = active;
-
-            //Audity ------------------------------------
-            EditedBy = editedBy;
-            EditedOn = DateTime.Now;
-
-            Validate();
         }
     }
 }

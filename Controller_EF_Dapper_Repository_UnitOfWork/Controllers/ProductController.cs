@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
-using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 {
@@ -15,21 +13,20 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
-        private readonly ApplicationDbContext _dbContext;
-
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
+        //private readonly ApplicationDbContext _dbContext;
+
         public ProductController(ILogger<ProductController> logger,
                                  ApplicationDbContext dbContext,
-                                 IMapper mapper,                     
+                                 IMapper mapper,
                                  IUnitOfWork unitOfWork)
-                                 {
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            //_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -37,63 +34,29 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         //EndPoints
         //------------------------------------------------------------------------------------
         [HttpGet, Route("{id:guid}")]
-        public IActionResult ProductGet([FromRoute] Guid id)
+        public async Task<IActionResult> ProductGet([FromRoute] Guid id)
         {
-            var products = _dbContext.Products
-                                     .Include(p => p.Category)
-                                     .Where(p => p.Id == id)
-                                     .OrderBy(p => p.Name)
-                                     .ToList();
-
-            var productResponseDTO = products.Select(p => new ProductResponseDTO(
-                                                        p.Id,
-                                                        p.Name,
-                                                        p.Description,
-                                                        p.Price,
-                                                        p.Active
-                                                     ));
-
-            return new ObjectResult(productResponseDTO);
-        }
-
-        [HttpGet, Route("/mapper")]
-        public async Task<IEnumerable<ProductResponseDTO>> ProductGetMapper()
-        {
-            var products = await _unitOfWork.Products.GetAll();
-
+            var products = await _unitOfWork.Products.Get(id);
             var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
 
-            return productResponseDTO;
+            return (IActionResult)productResponseDTO;
         }
 
         [HttpGet, Route("")]
-        public async Task<IActionResult> ProductsGetAllAsync()
+        public async Task<IEnumerable<IActionResult>> ProductGetAll()
         {
-            //return (IActionResult)await _unitOfWork.Products.GetAll();
+            var products = await _unitOfWork.Products.GetAll();
+            var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
 
-            var products = _dbContext.Products
-                                  .AsNoTracking()
-                                  .Include(p => p.Category)
-                                  .OrderBy(p => p.Name)
-                                  .ToList();
-
-            var productsResponseDTO = products.Select(p => new ProductResponseDTO(
-                                                        p.Id,
-                                                        p.Name,
-                                                        p.Description,
-                                                        p.Price,
-                                                        p.Active
-                                                     ));
-
-            return new ObjectResult(productsResponseDTO);
+            return (IEnumerable<IActionResult>)productResponseDTO;
         }
 
-        [HttpGet, Route("{id:guid}/solds")]
+        [HttpGet, Route("{/solds")]
         public IActionResult ProductSoldGet()
         {
-            //var result = _serviceAllProductsSold.Execute();
-            //return new ObjectResult(result);
-            return null;
+            var products = _unitOfWork.Products.GetAllProductsSolds();
+            var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+            return (IActionResult)productResponseDTO;
         }
 
         [HttpPost, Route("")]
@@ -102,134 +65,78 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             //Usuario fixo, mas  poderia vir de um identity
             string user = "doe joe";
 
+            Product product = _mapper.Map<Product>(productRequestDTO);
+
             //Recupero a categoria de forma sincrona
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == productRequestDTO.CategoryId);
-
-            var product = new Product();
-
-            product.AddProduct(productRequestDTO.Name,
-                                productRequestDTO.Description,
-                                productRequestDTO.Price,
-                                true,
-                                category,
-                                user
-                                );
+            Category category = await _unitOfWork.Categories.Get(productRequestDTO.CategoryId);
+            product.Category = category;
+            //-----------------------------------------
+            product.CreatedBy = user;
+            product.CreatedOn = DateTime.Now;
 
             if (!product.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
             }
+            else
+            {
+                await _unitOfWork.Products.Add(product);
+                var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
 
-            await _dbContext.Products.AddAsync(product);
-            _dbContext.SaveChanges();
-
-            return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id));
+                return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id));
+            }
         }
 
         [HttpPut, Route("{id:guid}")]
-        public IActionResult ProductPut([FromRoute] Guid id,
+        public async Task<IActionResult> ProductPutAsync([FromRoute] Guid id,
                                          ProductRequestDTO productRequestDTO)
         {
             //Usuario fixo, mas  poderia vir de um identity
             string user = "doe joe";
 
             //Recupero o produto do banco
-            var product = _dbContext.Products.FirstOrDefault(c => c.Id == id);
+            var product = await _unitOfWork.Products.Get(id);
 
-            if (product == null)
-            {
-                return new ObjectResult(Results.NotFound());
-            }
+            //nao encontrado
+            if (product == null) return new ObjectResult(Results.NotFound());
 
             //Recupero a categoria de forma sincrona
-            var category = _dbContext.Categories.FirstOrDefault(c => c.Id == productRequestDTO.CategoryId);
+            Category category = await _unitOfWork.Categories.Get(productRequestDTO.CategoryId);
+            product.Category = category;
 
-            if (category == null)
-            {
-                return new ObjectResult(Results.NotFound());
-            }
+            //nao encontrado
+            if (category == null) return new ObjectResult(Results.NotFound());
 
-            product.EditProduct(productRequestDTO.Name,
-                                productRequestDTO.Price,
-                                true,
-                                category,
-                                user
-                                );
+            product.Name = productRequestDTO.Name;
+            product.Price = productRequestDTO.Price;
+            product.Active = true;
+            product.Category = category;
+            //-----------------------------------------
+            product.EditedBy = user;
+            product.EditedOn = DateTime.Now;
 
             if (!product.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
             }
-
-            _dbContext.SaveChanges();
-
-            return new ObjectResult(Results.Ok());
+            else
+            {
+                _unitOfWork.Products.Update(product);
+                return new ObjectResult(Results.Ok());
+            }
         }
 
         [HttpDelete, Route("{id:guid}")]
-        public IActionResult ProductDelete([FromRoute] Guid id)
+        public async Task<IActionResult> ProductDeleteAsync([FromRoute] Guid id)
         {
             //Recupero o produto do banco
-            var product = _dbContext.Products.FirstOrDefault(c => c.Id == id);
+            var product = await _unitOfWork.Products.Get(id);
 
-            if (product == null)
-            {
-                return new ObjectResult(Results.NotFound());
-            }
+            //nao encontrado
+            if (product == null) return new ObjectResult(Results.NotFound());
 
-            _dbContext.Products.Remove(product);
-            _dbContext.SaveChanges();
-
+            _unitOfWork.Products.Delete(product);
             return new ObjectResult(Results.Ok());
         }
     }
 }
-
-//[HttpPost]
-//public IActionResult Create([FromBody] TodoItem item)
-//{
-//    if (item == null)
-//    {
-//        return BadRequest();
-//    }
-//    TodoItems.Add(item);
-//    return CreatedAtRoute("GetTodo", new { id = item.Key }, item);
-//}
-
-//[HttpPut("{id}")]
-//public IActionResult Update(string id, [FromBody] TodoItem item)
-//{
-//    if (item == null || item.Key != id)
-//    {
-//        return BadRequest();
-//    }
-//    var todo = TodoItems.Find(id);
-//    if (todo == null)
-//    {
-//        return NotFound();
-//    }
-//    TodoItems.Update(item);
-//    return new NoContentResult();
-//}
-
-//[HttpDelete("{id}")]
-//public void Delete(string id)
-//{
-//    TodoItems.Remove(id);
-//}
-
-//public IEnumerable<TodoItem> GetAll()
-//{
-//    return TodoItems.GetAll();
-//}
-
-//[HttpGet("{id}", Name = "GetTodo")]
-//public IActionResult GetById(string id)
-//{
-//    var item = TodoItems.Find(id);
-//    if (item == null)
-//    {
-//        return NotFound();
-//    }
-//    return new ObjectResult(item);
-//}

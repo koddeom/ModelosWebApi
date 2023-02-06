@@ -5,8 +5,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.P
 {
     public class Category : Entity
     {
-        public string Name { get; private set; }
-        public bool Active { get; private set; }
+        public string Name { get; set; }
+        public bool Active { get; set; }
 
         private void Validate()
         {
@@ -23,36 +23,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.P
 
         public Category()
         {
-            // use uum construtor vazio sempre que operar com o ef
-        }
-
-        public void AddCategory(string name, string createdBy)
-        {
-            Name = name;
-            Active = true;
-
-            //Audity ------------------------------------
-            CreatedBy = createdBy;
-            CreatedOn = DateTime.Now;
-
-            Validate();
-        }
-
-        public void EditInfo(string name, bool active, string editedBy)
-        {
-            Active = active;
-            Name = name;
-
-            //Audity ------------------------------------
-            EditedBy = editedBy;
-            EditedOn = DateTime.Now;
-
-            Validate();
-        }
-
-        public static implicit operator Category(Task<Category?> v)
-        {
-            throw new NotImplementedException();
+            // use um construtor vazio sempre que operar com o ef
         }
     }
 }
