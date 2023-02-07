@@ -1,9 +1,15 @@
-﻿using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
+﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
+using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product;
+using Microsoft.AspNetCore.Mvc;
 using static Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base.IGenericRepository;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories.Interfaces
 {
     public interface IOrderRepository : IGenericRepository<Order>
     {
+        //Metodos personalizados
+        Task<OrderDetailed> GetDetailedOrder(Guid id);
+
+        Task<ObjectResult> SaveOrder(List<Guid> orderProductsId, OrderBuyer orderBuyer);
     }
 }

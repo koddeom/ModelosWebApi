@@ -1,4 +1,4 @@
-﻿namespace Controller_EF_Dapper_Repository_UnityOfWork.Business.Models
+﻿namespace Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product
 {
     public class ProductSold
     {

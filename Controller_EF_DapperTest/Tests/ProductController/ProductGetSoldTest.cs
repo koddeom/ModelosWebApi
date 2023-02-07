@@ -1,9 +1,3 @@
-using Controller_EF_Dapper.Business;
-using Controller_EF_Dapper.Endpoints.Products.DTO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-
 namespace Controller_EF_DapperTest.Tests.ProductController
 {
     [TestClass]

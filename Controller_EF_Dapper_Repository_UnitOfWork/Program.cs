@@ -2,6 +2,7 @@ using AutoMapper;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Business;
+using Controller_EF_Dapper_Repository_UnityOfWork.Business.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
 using Controller_EF_Dapper_Repository_UnityOfWork.Mapping;
 using Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories;
@@ -71,7 +72,8 @@ builder.Services.AddSingleton(mapper);
 //--------------------------------------------------------------------------------------------------
 //Meus servicos personalizados da aplicacao
 //--------------------------------------------------------------------------------------------------
-builder.Services.AddScoped<ServiceAllProductsSold>();
+builder.Services.AddScoped<IServiceProductSold, ServiceProductSold>();
+builder.Services.AddScoped<IServiceOrderDetailed, ServiceOrderDetailed>();
 
 //Repositorios (Repository DDD)
 builder.Services.AddTransient<IProductRepository, ProductRepository>();

@@ -1,13 +1,13 @@
 ﻿using Controller_EF_Dapper_Repository_UnityOfWork.Business.Interface;
-using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models;
+using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product;
 using Dapper;
 using Microsoft.Data.SqlClient;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
 {
-    public class ServiceAllProductsSold : IServiceAllProductSold
+    public class ServiceProductSold : IServiceProductSold
     {
-        public ServiceAllProductsSold(IConfiguration configuration)
+        public ServiceProductSold(IConfiguration configuration)
         {
             //Necessario para recuperar as configuracoes de conexao para
             //usar com Dapper
@@ -16,7 +16,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
 
         public IConfiguration configuration { get; }
 
-        public async Task<IEnumerable<ProductSold>> Execute()
+        public async Task<IEnumerable<ProductSold>> GetAll()
         {
             var db = new SqlConnection(configuration["Database:SQlServer"]);
 

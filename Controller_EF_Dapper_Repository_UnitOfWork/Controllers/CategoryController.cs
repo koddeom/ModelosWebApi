@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
-using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Categories.DTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,21 +28,21 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         //------------------------------------------------------------------------------------
 
         [HttpGet, Route("{id:guid}")]
-        public async Task<IActionResult> CategoryGet([FromRoute] Guid id)
+        public async Task<ActionResult<CategoryResponseDTO>> CategoryGet([FromRoute] Guid id)
         {
-            var categories = await _unitOfWork.Categories.Get(id);
-            var categoryResponseDTO = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
+            var category = await _unitOfWork.Categories.Get(id);
+            var categoryResponseDTO = _mapper.Map<CategoryResponseDTO>(category);
 
             return new ObjectResult(categoryResponseDTO);
         }
 
         [HttpGet, Route("")]
-        public async Task<IEnumerable<IActionResult>> CategorysGetAllAsync()
+        public async Task<ActionResult<IEnumerable<CategoryResponseDTO>>> CategorysGetAllAsync()
         {
             var categories = await _unitOfWork.Categories.GetAll();
             var categoriesResponseDTO = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
 
-            return (IEnumerable<IActionResult>)categoriesResponseDTO;
+            return new ObjectResult(categoriesResponseDTO);
         }
 
         [HttpPost, Route("")]
@@ -63,6 +63,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             else
             {
                 await _unitOfWork.Categories.Add(category);
+                _unitOfWork.Commit();
+
                 var categoryResponseDTO = _mapper.Map<CategoryResponseDTO>(category);
 
                 return new ObjectResult(Results.Created($"/categories/{category.Id}", category.Id));
@@ -95,6 +97,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             else
             {
                 _unitOfWork.Categories.Update(category);
+                _unitOfWork.Commit();
+
                 return new ObjectResult(Results.Ok());
             }
         }
@@ -109,6 +113,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             if (category == null) return new ObjectResult(Results.NotFound());
 
             _unitOfWork.Categories.Delete(category);
+            _unitOfWork.Commit();
+
             return new ObjectResult(Results.Ok());
         }
     }

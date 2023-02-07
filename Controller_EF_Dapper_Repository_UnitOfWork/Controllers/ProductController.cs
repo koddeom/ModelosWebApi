@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
-using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 {
@@ -30,31 +29,32 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         //------------------------------------------------------------------------------------
         //EndPoints
         //------------------------------------------------------------------------------------
+
         [HttpGet, Route("{id:guid}")]
-        public async Task<IActionResult> ProductGet([FromRoute] Guid id)
+        public async Task<ActionResult<ProductResponseDTO>> ProductGet([FromRoute] Guid id)
         {
             var product = await _unitOfWork.Products.Get(id);
             var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
 
             return new ObjectResult(productResponseDTO);
-           
         }
 
         [HttpGet, Route("")]
-        public async Task<IEnumerable<IActionResult>> ProductGetAll()
+        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> ProductGetAllAsync()
         {
             var products = await _unitOfWork.Products.GetAll();
             var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
 
-            return (IEnumerable<IActionResult>)productsResponseDTO;
+            return new ObjectResult(productsResponseDTO);
         }
 
-        [HttpGet, Route("{/solds")]
-        public IActionResult ProductSoldGet()
+        [HttpGet, Route("/solds")]
+        public ActionResult<IEnumerable<ProductResponseDTO>> ProductSoldGet()
         {
-            var products = _unitOfWork.Products.GetAllProductsSolds();
-            var productResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
-            return (IActionResult)productResponseDTO;
+            var products = _unitOfWork.Products.GetSoldProducts();
+            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+
+            return new ObjectResult(productsResponseDTO);
         }
 
         [HttpPost, Route("")]
@@ -79,6 +79,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             else
             {
                 await _unitOfWork.Products.Add(product);
+                _unitOfWork.Commit();
+
                 var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
 
                 return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id));
@@ -120,6 +122,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             else
             {
                 _unitOfWork.Products.Update(product);
+                _unitOfWork.Commit();
+
                 return new ObjectResult(Results.Ok());
             }
         }
@@ -134,6 +138,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             if (product == null) return new ObjectResult(Results.NotFound());
 
             _unitOfWork.Products.Delete(product);
+            _unitOfWork.Commit();
+
             return new ObjectResult(Results.Ok());
         }
     }

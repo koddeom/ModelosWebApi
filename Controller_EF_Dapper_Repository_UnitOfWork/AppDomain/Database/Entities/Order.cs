@@ -1,11 +1,11 @@
 ﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.BaseEntity;
 using Flunt.Validations;
 
-namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product
+namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities
 {
     public class Order : Entity
     {
-        public string ClientId { get; set; }
+        public Guid ClientId { get; set; }
         public string ClientName { get; set; }
         public List<Product> Products { get; set; }
         public decimal Total { get; set; }
@@ -14,7 +14,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.P
         {
             //validacao com flunt
             var contract = new Contract<Order>()
-                .IsNotNullOrEmpty(ClientId, "ClientId", "Id é obrigatório")
                 .IsNotNullOrEmpty(ClientName, "ClientName", "Nome é obrigatório");
 
             AddNotifications(contract);

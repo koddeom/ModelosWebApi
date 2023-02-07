@@ -1,4 +1,4 @@
-﻿using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product;
+﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
 using Flunt.Notifications;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +31,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database
             //Define configuracoes individuais que serão aplicadas pelo EF
 
             //------------------------------------------------------------------------------------------------
-            //TABELA PRODUTO
+            //TABELA PRODUTO - PRODUCT
             //------------------------------------------------------------------------------------------------
             builder.Entity<Product>()
                          .Property(p => p.Description).HasMaxLength(255)
@@ -61,7 +61,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database
                    .Property(p => p.EditedOn).IsRequired(false);
 
             //------------------------------------------------------------------------------------------------
-            //TABELA CATEGORIA
+            //TABELA CATEGORIA - CATEGORY
             //------------------------------------------------------------------------------------------------
 
             builder.Entity<Category>()
@@ -82,7 +82,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database
                    .Property(c => c.EditedOn).IsRequired(false);
 
             //------------------------------------------------------------------------------------------------
-            //TABELA PEDIDOS
+            //TABELA PEDIDOS - ORDER
             //------------------------------------------------------------------------------------------------
 
             builder.Entity<Order>()

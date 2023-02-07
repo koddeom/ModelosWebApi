@@ -1,7 +1,7 @@
 ﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.BaseEntity;
 using Flunt.Validations;
 
-namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product
+namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities
 {
     public class Product : Entity
     {
@@ -10,7 +10,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.P
 
         public string Name { get; set; }
         public string Description { get; set; }
-        public Decimal Price { get; set; }
+        public decimal Price { get; set; }
         public bool Active { get; set; } = true;
 
         //Categorias -------------------------------------------------

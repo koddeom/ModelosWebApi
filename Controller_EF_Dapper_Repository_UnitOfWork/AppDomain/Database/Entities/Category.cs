@@ -1,7 +1,7 @@
 ﻿using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.BaseEntity;
 using Flunt.Validations;
 
-namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database.Entities.Product
+namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities
 {
     public class Category : Entity
     {
