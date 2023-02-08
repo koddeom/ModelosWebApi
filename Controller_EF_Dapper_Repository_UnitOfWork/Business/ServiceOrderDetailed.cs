@@ -3,35 +3,49 @@ using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetai
 using Controller_EF_Dapper_Repository_UnityOfWork.Business.Interface;
 using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
-using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Orders.DTO;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
 {
     public class ServiceOrderDetailed : IServiceOrderDetailed
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IConfiguration _configuration;
 
         public ServiceOrderDetailed()
         {
         }
 
-        public ServiceOrderDetailed(ApplicationDbContext dbContext)
+        public ServiceOrderDetailed(IConfiguration configuration,
+                                    ApplicationDbContext dbContext
+                                    )
         {
+            //Necessario para recuperar as configuracoes de conexao parao Dapper
+            _configuration = configuration;
+
             _dbContext = dbContext;
         }
 
-        public async Task<OrderDetailed> Get(Guid id)
+        public async Task<OrderDetailed> Get(Order order)
         {
-            //01 Recupero a Order
-            var order = _dbContext.Orders.FirstOrDefault(o => o.Id == id);  
+            var db = new SqlConnection(_configuration["Database:SQlServer"]);
 
-            //02 Recupero os produtos da order
-            var orderProducts = order.Products.Select(p => new OrderProductDTO(p.Id, p.Name));
+            var query = @$" SELECT A.ID,
+                                  A.NAME
+                             FROM PRODUCTS A
+                       INNER JOIN ORDERPRODUCT B ON
+                             B.ORDERSID = '{order.Id}'
+                         AND A.ID = B.PRODUCTSID";
 
+            var products = await db.QueryAsync<OrderProduct>(query);
 
-            //03 Monto o objeto composto com os dados da order e a lista de produtos
-            var orderDetailed = new OrderDetailed(order.Id, null, orderProducts);
+            var orderDetailed = new OrderDetailed();
+
+            orderDetailed.ClientId = order.ClientId;
+            orderDetailed.ClientName = order.ClientName;
+            orderDetailed.Products = products;
 
             return orderDetailed;
         }

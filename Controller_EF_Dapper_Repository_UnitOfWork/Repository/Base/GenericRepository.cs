@@ -21,7 +21,17 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            return await _context.Set<T>().ToListAsync();
+
+            try
+            {
+                return await _context.Set<T>().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
 
         public async Task Add(T entity)

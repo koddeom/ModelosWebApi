@@ -18,9 +18,9 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories
             _serviceOrderDetailed = serviceOrderDetailed;
         }
 
-        public Task<OrderDetailed> GetDetailedOrder(Guid id)
+        public Task<OrderDetailed> GetDetailedOrder(Order order)
         {
-            return _serviceOrderDetailed.Get(id);
+            return _serviceOrderDetailed.Get(order);
         }
 
         public Task<ObjectResult> SaveOrder(List<Guid> orderProductsId, OrderBuyer orderBuyer)

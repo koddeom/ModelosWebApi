@@ -21,8 +21,9 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Mapping
             CreateMap<Category, CategoryResponseDTO>().ReverseMap();
 
             //Order
-            CreateMap<Order, OrderRequestDTO>().ReverseMap();
+            CreateMap<Order, OrderProductsDTO>().ReverseMap();
             CreateMap<OrderDetailed, OrderDetailedResponseDTO>().ReverseMap();
+            CreateMap<OrderProduct, OrderProductDTO>().ReverseMap();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entitie
 {
     public class Order : Entity
     {
-        public Guid ClientId { get; set; }
+        public string ClientId { get; set; }
         public string ClientName { get; set; }
         public List<Product> Products { get; set; }
         public decimal Total { get; set; }

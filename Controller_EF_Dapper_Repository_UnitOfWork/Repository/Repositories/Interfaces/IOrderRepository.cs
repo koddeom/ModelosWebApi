@@ -8,7 +8,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Repositories.In
     public interface IOrderRepository : IGenericRepository<Order>
     {
         //Metodos personalizados
-        Task<OrderDetailed> GetDetailedOrder(Guid id);
+        Task<OrderDetailed> GetDetailedOrder(Order order);
 
         Task<ObjectResult> SaveOrder(List<Guid> orderProductsId, OrderBuyer orderBuyer);
     }

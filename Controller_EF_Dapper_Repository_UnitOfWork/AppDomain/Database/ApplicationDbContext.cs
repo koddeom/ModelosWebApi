@@ -95,7 +95,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database
             builder.Entity<Order>()
            .HasMany(o => o.Products)
            .WithMany(p => p.Orders)
-           .UsingEntity(x => x.ToTable("OrderProduct"));
+           .UsingEntity(t => t.ToTable("OrderProduct"));
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configuration)
