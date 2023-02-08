@@ -12,17 +12,17 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Mapping
         public MappingProfile()
         {
             //Product
-            CreateMap<Product, ProductRequestDTO>();
-            CreateMap<Product, ProductResponseDTO>();
-            CreateMap<Product, ProductSoldResponseDTO>();
+            CreateMap<Product, ProductRequestDTO>().ReverseMap();
+            CreateMap<Product, ProductResponseDTO>().ReverseMap();
+            CreateMap<ProductSold, ProductSoldResponseDTO>().ReverseMap();
 
             //Category
-            CreateMap<Category, CategoryRequestDTO>();
-            CreateMap<Category, CategoryResponseDTO>();
+            CreateMap<Category, CategoryRequestDTO>().ReverseMap();
+            CreateMap<Category, CategoryResponseDTO>().ReverseMap();
 
             //Order
-            CreateMap<Order, OrderRequestDTO>();
-            CreateMap<OrderDetailed, OrderDetailedResponseDTO>();
+            CreateMap<Order, OrderRequestDTO>().ReverseMap();
+            CreateMap<OrderDetailed, OrderDetailedResponseDTO>().ReverseMap();
         }
     }
 }

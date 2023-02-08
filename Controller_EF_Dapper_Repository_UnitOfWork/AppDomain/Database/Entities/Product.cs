@@ -26,7 +26,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entitie
             // use um construtor vazio sempre que operar com o ef
         }
 
-        private void Validate()
+        public void Validate()
         {
             //validacao com flunt
             var contract = new Contract<Product>()

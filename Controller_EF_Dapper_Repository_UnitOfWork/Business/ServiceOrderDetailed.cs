@@ -24,10 +24,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
         public async Task<OrderDetailed> Get(Guid id)
         {
             //01 Recupero a Order
-            var order = _dbContext.Orders.FirstOrDefault(order => order.Id == id);
+            var order = _dbContext.Orders.FirstOrDefault(o => o.Id == id);  
 
             //02 Recupero os produtos da order
             var orderProducts = order.Products.Select(p => new OrderProductDTO(p.Id, p.Name));
+
 
             //03 Monto o objeto composto com os dados da order e a lista de produtos
             var orderDetailed = new OrderDetailed(order.Id, null, orderProducts);

@@ -1,4 +1,6 @@
-﻿namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
+﻿using System.Linq.Expressions;
+
+namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
 {
     public interface IGenericRepository
     {
@@ -13,6 +15,8 @@
             void Delete(T entity);
 
             void Update(T entity);
+
+            Task<List<T>> Find(Expression<Func<T, bool>> filter);
         }
     }
 }

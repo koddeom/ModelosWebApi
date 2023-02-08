@@ -10,7 +10,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entitie
         public List<Product> Products { get; set; }
         public decimal Total { get; set; }
 
-        private void Validate()
+        public void Validate()
         {
             //validacao com flunt
             var contract = new Contract<Order>()

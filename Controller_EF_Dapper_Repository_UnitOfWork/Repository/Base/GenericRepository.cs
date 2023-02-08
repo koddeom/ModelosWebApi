@@ -1,5 +1,6 @@
 ﻿using Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using static Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base.IGenericRepository;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
@@ -37,5 +38,17 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
         {
             _context.Set<T>().Update(entity);
         }
+
+        // Esse método usa a expressão LINQ Where para filtrar os objetos do tipo T que
+        // atendem ao predicado fornecido. Em seguida, o resultado é convertido
+        // em uma lista com o método ToListAsync e retornado como um Task
+        // que representa o resultado da operação assíncrona.
+
+        public async Task<List<T>> Find(Expression<Func<T, bool>> filter)
+        {
+            return await _context.Set<T>().Where(filter).ToListAsync();
+        }
+
+
     }
 }

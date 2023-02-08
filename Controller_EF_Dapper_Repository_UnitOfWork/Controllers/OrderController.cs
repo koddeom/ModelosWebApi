@@ -33,10 +33,12 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             //Usuario fixo, mas  poderia vir de um identity
             string userName = "doe joe";
 
-            //01 Recupero a Order
             var orderDetailed = (OrderDetailed)await _unitOfWork.Orders.GetDetailedOrder(id);
-            orderDetailed.ClientName = userName;
 
+            if (orderDetailed == null)
+                return new ObjectResult(Results.NotFound());
+
+            orderDetailed.ClientName = userName;
             OrderDetailedResponseDTO orderDetailedResponseDTO = _mapper.Map<OrderDetailedResponseDTO>(orderDetailed);
             return new ObjectResult(orderDetailedResponseDTO);
         }
@@ -50,7 +52,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             orderBuyer.Name = "Doe Joe Client";
 
             IActionResult result = await _unitOfWork.Orders.SaveOrder(orderRequestDTO.ProductListIds, orderBuyer);
-
             return new ObjectResult(result);
         }
     }

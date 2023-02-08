@@ -8,7 +8,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entitie
         public string Name { get; set; }
         public bool Active { get; set; }
 
-        private void Validate()
+        public void Validate()
         {
             //validacao com flunt
             var contract = new Contract<Category>()

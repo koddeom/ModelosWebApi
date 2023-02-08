@@ -31,8 +31,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         public async Task<ActionResult<CategoryResponseDTO>> CategoryGet([FromRoute] Guid id)
         {
             var category = await _unitOfWork.Categories.Get(id);
-            var categoryResponseDTO = _mapper.Map<CategoryResponseDTO>(category);
 
+            if (category == null)
+                return new ObjectResult(Results.NotFound());
+
+            var categoryResponseDTO = _mapper.Map<CategoryResponseDTO>(category);
             return new ObjectResult(categoryResponseDTO);
         }
 
@@ -40,8 +43,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         public async Task<ActionResult<IEnumerable<CategoryResponseDTO>>> CategorysGetAllAsync()
         {
             var categories = await _unitOfWork.Categories.GetAll();
-            var categoriesResponseDTO = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
 
+            if (categories == null)
+                return new ObjectResult(Results.NotFound());
+
+            var categoriesResponseDTO = _mapper.Map<IEnumerable<CategoryResponseDTO>>(categories);
             return new ObjectResult(categoriesResponseDTO);
         }
 
@@ -56,6 +62,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             category.CreatedBy = user;
             category.CreatedOn = DateTime.Now;
 
+            category.Validate();
             if (!category.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()));
@@ -82,14 +89,16 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             Category category = await _unitOfWork.Categories.Get(id);
 
             //nao encontrado
-            if (category == null) return new ObjectResult(Results.NotFound());
+            if (category == null)
+                return new ObjectResult(Results.NotFound());
 
             category.Name = categoryRequestDTO.Name;
             category.Active = true;
             //-----------------------------------------
             category.EditedBy = user;
             category.EditedOn = DateTime.Now;
-
+            
+            category.Validate();
             if (!category.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()));
@@ -108,6 +117,9 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         {
             //Recupero a categoria
             var category = await _unitOfWork.Categories.Get(id);
+
+            if (category == null)
+                return new ObjectResult(Results.NotFound());
 
             //nao encontrado
             if (category == null) return new ObjectResult(Results.NotFound());

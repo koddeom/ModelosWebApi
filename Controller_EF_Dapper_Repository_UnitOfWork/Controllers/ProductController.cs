@@ -2,8 +2,10 @@
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
+using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 {
@@ -34,26 +36,48 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         public async Task<ActionResult<ProductResponseDTO>> ProductGet([FromRoute] Guid id)
         {
             var product = await _unitOfWork.Products.Get(id);
-            var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
 
+            if (product == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
             return new ObjectResult(productResponseDTO);
         }
 
         [HttpGet, Route("")]
-        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> ProductGetAllAsync()
+        public async Task<ActionResult<IEnumerable<ProductSoldResponseDTO>>> ProductGetAllAsync()
         {
             var products = await _unitOfWork.Products.GetAll();
-            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
 
+            if (products == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
             return new ObjectResult(productsResponseDTO);
         }
 
         [HttpGet, Route("/solds")]
-        public ActionResult<IEnumerable<ProductResponseDTO>> ProductSoldGet()
+        public async Task<ActionResult<IEnumerable<ProductSoldResponseDTO>>> ProductSoldGetAsync()
         {
-            var products = _unitOfWork.Products.GetSoldProducts();
-            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+            var products = await _unitOfWork.Products.GetSoldProducts();
 
+            if (products == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productsSoldResponseDTO = _mapper.Map<IEnumerable<ProductSoldResponseDTO>>(products);
+         
+            return new ObjectResult(productsSoldResponseDTO);
+        }
+
+        [HttpGet, Route("/genericFind")]
+        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> ProductFind()
+        {
+            var products = await _unitOfWork.Products.Find(p => p.Name.Contains("IBM"));
+
+            if (products == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
             return new ObjectResult(productsResponseDTO);
         }
 
@@ -72,6 +96,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             product.CreatedBy = user;
             product.CreatedOn = DateTime.Now;
 
+
+            product.Validate();
             if (!product.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
@@ -98,7 +124,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             var product = await _unitOfWork.Products.Get(id);
 
             //nao encontrado
-            if (product == null) return new ObjectResult(Results.NotFound());
+            if (product == null)
+                return new ObjectResult(Results.NotFound());
 
             //Recupero a categoria de forma sincrona
             Category category = await _unitOfWork.Categories.Get(productRequestDTO.CategoryId);
@@ -109,12 +136,14 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 
             product.Name = productRequestDTO.Name;
             product.Price = productRequestDTO.Price;
+            product.Description = productRequestDTO.Description;
             product.Active = true;
             product.Category = category;
             //-----------------------------------------
             product.EditedBy = user;
             product.EditedOn = DateTime.Now;
 
+            product.Validate();
             if (!product.IsValid)
             {
                 return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
@@ -135,7 +164,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             var product = await _unitOfWork.Products.Get(id);
 
             //nao encontrado
-            if (product == null) return new ObjectResult(Results.NotFound());
+            if (product == null)
+                return new ObjectResult(Results.NotFound());
 
             _unitOfWork.Products.Delete(product);
             _unitOfWork.Commit();
