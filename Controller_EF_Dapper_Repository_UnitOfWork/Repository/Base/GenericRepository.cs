@@ -21,17 +21,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
 
         public async Task<IEnumerable<T>> GetAll()
         {
-
-            try
-            {
-                return await _context.Set<T>().ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-            
+            return await _context.Set<T>().ToListAsync();
         }
 
         public async Task Add(T entity)
@@ -58,7 +48,5 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Repository.Base
         {
             return await _context.Set<T>().Where(filter).ToListAsync();
         }
-
-
     }
 }

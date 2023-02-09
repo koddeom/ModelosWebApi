@@ -30,16 +30,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
 
         public async Task<OrderDetailed> Get(Order order)
         {
-            var db = new SqlConnection(_configuration["Database:SQlServer"]);
-
-            var query = @$" SELECT A.ID,
-                                  A.NAME
-                             FROM PRODUCTS A
-                       INNER JOIN ORDERPRODUCT B ON
-                             B.ORDERSID = '{order.Id}'
-                         AND A.ID = B.PRODUCTSID";
-
-            var products = await db.QueryAsync<OrderProduct>(query);
+            var products = await GetOrderProducts(order.Id);
 
             var orderDetailed = new OrderDetailed();
 
@@ -48,6 +39,22 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
             orderDetailed.Products = products;
 
             return orderDetailed;
+        }
+
+        public async Task<IEnumerable<OrderProduct>> GetOrderProducts(Guid Id)
+        {
+            var db = new SqlConnection(_configuration["Database:SQlServer"]);
+
+            var query = @$" SELECT A.ID,
+                                  A.NAME
+                             FROM PRODUCTS A
+                       INNER JOIN ORDERPRODUCT B ON
+                             B.ORDERSID = '{Id}'
+                         AND A.ID = B.PRODUCTSID";
+            //------------------------------------------------------------
+            IEnumerable<OrderProduct> products = await db.QueryAsync<OrderProduct>(query);
+
+            return products;
         }
 
         public async Task<ObjectResult> SaveOrder(List<Guid> orderProductsId, OrderBuyer orderBuyer)

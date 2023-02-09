@@ -91,6 +91,20 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Domain.Database
             builder.Entity<Order>()
            .Property(o => o.ClientName).IsRequired(true);
 
+            //Audity---------------------------------------------------
+
+            builder.Entity<Order>()
+                .Property(c => c.CreatedBy).IsRequired(false);
+
+            builder.Entity<Order>()
+                   .Property(c => c.CreatedOn).IsRequired(false);
+
+            builder.Entity<Order>()
+                   .Property(c => c.EditedBy).IsRequired(false);
+
+            builder.Entity<Order>()
+                   .Property(c => c.EditedOn).IsRequired(false);
+
             //O entity cria uma tabela de muitos para muitos nesta situação
             builder.Entity<Order>()
            .HasMany(o => o.Products)

@@ -97,7 +97,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             //-----------------------------------------
             category.EditedBy = user;
             category.EditedOn = DateTime.Now;
-            
+
             category.Validate();
             if (!category.IsValid)
             {

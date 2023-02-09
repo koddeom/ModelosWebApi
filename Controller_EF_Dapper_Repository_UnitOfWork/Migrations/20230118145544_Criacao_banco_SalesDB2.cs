@@ -35,9 +35,9 @@ namespace WebApiControllerEFDapper.Migrations
                     ClientId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ClientName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EditedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EditedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     EditedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>

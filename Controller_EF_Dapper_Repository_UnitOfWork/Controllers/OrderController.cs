@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
+using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
-using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Orders.DTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,15 +44,47 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         }
 
         [HttpPost, Route("")]
-        public async Task<IActionResult> OrderPost(OrderProductsDTO orderRequestDTO)
+        public async Task<IActionResult> OrderPost(OrderRequestDTO orderRequestDTO)
         {
-            OrderBuyer orderBuyer = new OrderBuyer();
+            List<Product> orderProducts = new List<Product>();
 
-            orderBuyer.Id = "cod-3457";
-            orderBuyer.Name = "Doe Joe Client";
+            //Recupero os produtos do banco para garantir consistencia dos dados
+            if (orderRequestDTO.ProductsId.Any())
+                orderProducts = await _unitOfWork.Products.Find(p => orderRequestDTO.ProductsId
+                                                                                    .Contains(p.Id));
 
-            IActionResult result = await _unitOfWork.Orders.SaveOrder(orderRequestDTO.ProductListIds, orderBuyer);
-            return new ObjectResult(result);
+            if (orderProducts == null)
+                return new ObjectResult(Results.NotFound());
+
+            //Total gasto
+            decimal total = 0;
+            foreach (var product in orderProducts)
+            {
+                total += product.Price;
+            }
+
+            var order = new Order();
+
+            order.ClientId = "cod-1345";
+            order.ClientName = "Doe joe";
+            order.Products = orderProducts;
+            order.Total = total;
+            //--------------------------------------------
+            order.CreatedBy = "Neil Armstrong";
+            order.CreatedOn = DateTime.Now;
+
+            order.Validate();
+            if (!order.IsValid)
+            {
+                return new ObjectResult(Results.ValidationProblem(order.Notifications.ConvertToErrorDetails()));
+            }
+            else
+            {
+                await _unitOfWork.Orders.Add(order);
+                _unitOfWork.Commit();
+
+                return new ObjectResult(Results.Created($"/orders/{order.Id}", order.Id));
+            }
         }
     }
 }

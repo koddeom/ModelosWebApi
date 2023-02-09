@@ -8,6 +8,8 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business.Interface
     {
         Task<OrderDetailed> Get(Order order);
 
+        Task<IEnumerable<OrderProduct>> GetOrderProducts(Guid id);
+
         Task<ObjectResult> SaveOrder(List<Guid> orderProductsId, OrderBuyer orderBuyer);
     }
 }

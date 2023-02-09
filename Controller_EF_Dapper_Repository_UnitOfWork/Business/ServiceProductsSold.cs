@@ -8,12 +8,13 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business
     public class ServiceProductSold : IServiceProductSold
     {
         public IConfiguration configuration { get; }
-        
+
         public ServiceProductSold(IConfiguration configuration)
         {
             //Necessario para recuperar as configuracoes de conexao parao Dapper
             this.configuration = configuration;
         }
+
         public async Task<IEnumerable<ProductSold>> GetAll()
         {
             var db = new SqlConnection(configuration["Database:SQlServer"]);

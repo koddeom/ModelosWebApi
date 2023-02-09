@@ -2,10 +2,8 @@
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Database.Entities;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.Extensions.ErroDetailedExtension;
 using Controller_EF_Dapper_Repository_UnityOfWork.AppDomain.UnitOfWork.Interface;
-using Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product;
 using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 {
@@ -65,7 +63,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
                 return new ObjectResult(Results.NotFound());
 
             var productsSoldResponseDTO = _mapper.Map<IEnumerable<ProductSoldResponseDTO>>(products);
-         
+
             return new ObjectResult(productsSoldResponseDTO);
         }
 
@@ -95,7 +93,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             //-----------------------------------------
             product.CreatedBy = user;
             product.CreatedOn = DateTime.Now;
-
 
             product.Validate();
             if (!product.IsValid)

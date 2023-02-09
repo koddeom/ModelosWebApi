@@ -1,10 +1,7 @@
-﻿using Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Orders.DTO;
-
-namespace Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product
+﻿namespace Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product
 {
     public class OrderDetailed
     {
-
         public OrderDetailed()
         {
         }
@@ -19,8 +16,5 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Business.Models.Product
         public string ClientId { get; set; }
         public string ClientName { get; set; }
         public IEnumerable<OrderProduct> Products { get; set; }
-
-
-
     }
 }
