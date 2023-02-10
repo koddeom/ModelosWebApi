@@ -1,10 +1,11 @@
 ﻿namespace Controller_EF_Dapper_Repository_UnityOfWork.Endpoints.Products.DTO
 {
-    public record ProductResponseDTO(
-        Guid Id,
-        String Name,
-        string Description,
-        Decimal Price,
-        bool Active
-    );
+    public class ProductResponseDTO
+    {
+        public Guid Id { get; set; }
+        public String Name { get; set; }
+        public string Description { get; set; }
+        public Decimal Price { get; set; }
+        public bool Active { get; set; }
+    }
 }

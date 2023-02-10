@@ -15,8 +15,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        //private readonly ApplicationDbContext _dbContext;
-
         public ProductController(ILogger<ProductController> logger,
                                  IMapper mapper,
                                  IUnitOfWork unitOfWork)
@@ -40,43 +38,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 
             var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
             return new ObjectResult(productResponseDTO);
-        }
-
-        [HttpGet, Route("")]
-        public async Task<ActionResult<IEnumerable<ProductSoldResponseDTO>>> ProductGetAllAsync()
-        {
-            var products = await _unitOfWork.Products.GetAll();
-
-            if (products == null)
-                return new ObjectResult(Results.NotFound());
-
-            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
-            return new ObjectResult(productsResponseDTO);
-        }
-
-        [HttpGet, Route("/solds")]
-        public async Task<ActionResult<IEnumerable<ProductSoldResponseDTO>>> ProductSoldGetAsync()
-        {
-            var products = await _unitOfWork.Products.GetSoldProducts();
-
-            if (products == null)
-                return new ObjectResult(Results.NotFound());
-
-            var productsSoldResponseDTO = _mapper.Map<IEnumerable<ProductSoldResponseDTO>>(products);
-
-            return new ObjectResult(productsSoldResponseDTO);
-        }
-
-        [HttpGet, Route("/genericFind")]
-        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> ProductFind()
-        {
-            var products = await _unitOfWork.Products.Find(p => p.Name.Contains("IBM"));
-
-            if (products == null)
-                return new ObjectResult(Results.NotFound());
-
-            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
-            return new ObjectResult(productsResponseDTO);
         }
 
         [HttpPost, Route("")]
@@ -103,10 +64,12 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             {
                 await _unitOfWork.Products.Add(product);
                 _unitOfWork.Commit();
-
                 var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
 
-                return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id));
+                return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id))
+                {
+                    StatusCode = StatusCodes.Status201Created
+                };
             }
         }
 
@@ -168,6 +131,43 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             _unitOfWork.Commit();
 
             return new ObjectResult(Results.Ok());
+        }
+
+        [HttpGet, Route("")]
+        public async Task<ActionResult<IEnumerable<ProductSoldResponseDTO>>> ProductGetAllAsync()
+        {
+            var products = await _unitOfWork.Products.GetAll();
+
+            if (products == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+            return new ObjectResult(productsResponseDTO);
+        }
+
+        [HttpGet, Route("/solds")]
+        public async Task<ActionResult<IEnumerable<ProductSoldResponseDTO>>> ProductSoldGetAsync()
+        {
+            var products = await _unitOfWork.Products.GetSoldProducts();
+
+            if (products == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productsSoldResponseDTO = _mapper.Map<IEnumerable<ProductSoldResponseDTO>>(products);
+
+            return new ObjectResult(productsSoldResponseDTO);
+        }
+
+        [HttpGet, Route("/genericFind")]
+        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> ProductFind()
+        {
+            var products = await _unitOfWork.Products.Find(p => p.Name.Contains("IBM"));
+
+            if (products == null)
+                return new ObjectResult(Results.NotFound());
+
+            var productsResponseDTO = _mapper.Map<IEnumerable<ProductResponseDTO>>(products);
+            return new ObjectResult(productsResponseDTO);
         }
     }
 }
