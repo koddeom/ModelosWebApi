@@ -58,7 +58,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             product.Validate();
             if (!product.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
+
             }
             else
             {
