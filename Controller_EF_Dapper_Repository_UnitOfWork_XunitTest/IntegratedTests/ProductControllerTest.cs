@@ -32,30 +32,30 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             // Arrange
 
             // Crio um Dummie para categoria
-            var category = new Category
+            var mockCategory = new Category
             {
                 Id = Guid.NewGuid(),
                 Name = "Category Dumie"
             };
 
             // Crio um Dummie de input dos dados
-            var productRequestDTO = new ProductRequestDTO
+            var mockProductRequestDTO = new ProductRequestDTO
             {
                 Name = "Product Dumie",
                 Description = "Description for product Dumie",
                 Price = 1500,
                 Active = true,
-                CategoryId = category.Id,
+                CategoryId = mockCategory.Id,
             };
 
-            // Crio um Dummie para a saida Esperada de Product
-            var product = new Product
+            // Crio um Dummie para a saida esperada de Product
+            var mockProduct = new Product
             {
                 Id = Guid.NewGuid(),
-                Category = category,
-                Name = productRequestDTO.Name,
-                Description = productRequestDTO.Description,
-                Price = productRequestDTO.Price,
+                Category = mockCategory,
+                Name = mockProductRequestDTO.Name,
+                Description = mockProductRequestDTO.Description,
+                Price = mockProductRequestDTO.Price,
                 CreatedBy = "doe joe",
                 CreatedOn = DateTime.Now
             };
@@ -67,20 +67,22 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             //UnitOfWork ------------------------------------------------------------------
             var unitOfWorkMock = new Mock<IUnitOfWork>();
 
+            //A categoria simulada é recuperada
             unitOfWorkMock.Setup(x => x.Categories.Get(It.IsAny<Guid>()))
-                                                  .ReturnsAsync(category);
+                                                  .ReturnsAsync(mockCategory);
 
+            //A criacao do produto é simulada
             unitOfWorkMock.Setup(x => x.Products.Add(It.IsAny<Product>()))
-                                                .Callback<Product>(p => p.Id = product.Id);
+                                                .Callback<Product>(p => p.Id = mockProduct.Id);
 
             //Mapper ------------------------------------------------------------------
             var mapperMock = new Mock<IMapper>();
 
             mapperMock.Setup(x => x.Map<Product>(It.IsAny<ProductRequestDTO>()))
-                                    .Returns(product);
+                                    .Returns(mockProduct);
 
             mapperMock.Setup(x => x.Map<ProductResponseDTO>(It.IsAny<Product>()))
-                                   .Returns(new ProductResponseDTO { Id = product.Id });
+                                   .Returns(new ProductResponseDTO { Id = mockProduct.Id });
 
             //Logger ------------------------------------------------------------------
             var loggerMock = new Mock<ILogger<ProductController>>();
@@ -89,20 +91,19 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var productController = new ProductController(loggerMock.Object, mapperMock.Object, unitOfWorkMock.Object);
 
             // Act
-            var result = await productController.ProductPost(productRequestDTO);
+            var result = await productController.ProductPost(mockProductRequestDTO);
 
             // Assert
             var createdResult = Assert.IsType<ObjectResult>(result);
-
-            Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
 
             //Obtendo o valor de "Location" Por reflexao
             var locationProperty = createdResult.Value.GetType().GetProperty("Location");
             var locationValue = locationProperty.GetValue(createdResult.Value);
 
-            Assert.Equal($"/products/{product.Id}", locationValue);
-        }
+            Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
 
+            Assert.Equal($"/products/{mockProduct.Id}", locationValue);
+        }
 
         [Fact]
         public async Task ProductPost_ReturnError_PriceZero()
@@ -110,30 +111,30 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             // Arrange
 
             // Crio um Dummie para categoria
-            var category = new Category
+            var mockCategory = new Category
             {
                 Id = Guid.NewGuid(),
                 Name = "Category Dumie"
             };
 
-            // Crio um Dummie de input dos dados
-            var productRequestDTO = new ProductRequestDTO
+            // Crio um Dummie de input dos dados com um erro simulado
+            var mockProductRequestDTO = new ProductRequestDTO
             {
                 Name = "Product Dumie",
                 Description = "Description for product Dumie",
                 Price = 0,
                 Active = true,
-                CategoryId = category.Id,
+                CategoryId = mockCategory.Id,
             };
 
             // Crio um Dummie para a saida Esperada de Product
-            var product = new Product
+            var mockProduct = new Product
             {
                 Id = Guid.NewGuid(),
-                Category = category,
-                Name = productRequestDTO.Name,
-                Description = productRequestDTO.Description,
-                Price = productRequestDTO.Price,
+                Category = mockCategory,
+                Name = mockProductRequestDTO.Name,
+                Description = mockProductRequestDTO.Description,
+                Price = mockProductRequestDTO.Price,
                 CreatedBy = "doe joe",
                 CreatedOn = DateTime.Now
             };
@@ -146,19 +147,19 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var unitOfWorkMock = new Mock<IUnitOfWork>();
 
             unitOfWorkMock.Setup(x => x.Categories.Get(It.IsAny<Guid>()))
-                                                  .ReturnsAsync(category);
+                                                  .ReturnsAsync(mockCategory);
 
             unitOfWorkMock.Setup(x => x.Products.Add(It.IsAny<Product>()))
-                                                .Callback<Product>(p => p.Id = product.Id);
+                                                .Callback<Product>(p => p.Id = mockProduct.Id);
 
             //Mapper ------------------------------------------------------------------
             var mapperMock = new Mock<IMapper>();
 
             mapperMock.Setup(x => x.Map<Product>(It.IsAny<ProductRequestDTO>()))
-                                    .Returns(product);
+                                    .Returns(mockProduct);
 
             mapperMock.Setup(x => x.Map<ProductResponseDTO>(It.IsAny<Product>()))
-                                   .Returns(new ProductResponseDTO { Id = product.Id });
+                                   .Returns(new ProductResponseDTO { Id = mockProduct.Id });
 
             //Logger ------------------------------------------------------------------
             var loggerMock = new Mock<ILogger<ProductController>>();
@@ -167,11 +168,289 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var productController = new ProductController(loggerMock.Object, mapperMock.Object, unitOfWorkMock.Object);
 
             // Act
-            var result = await productController.ProductPost(productRequestDTO);
+            var result = await productController.ProductPost(mockProductRequestDTO);
 
             // Assert
             var createdResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task ProductPut_AlteredWithSucess()
+        {
+            // Arrange
+            Guid productId_Dummie = Guid.NewGuid();
+
+            // Crio um Dummie para categoria
+            var mockCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Category Dumie"
+            };
+
+            // Crio um Dummie de input dos dados
+            var mockProductRequestDTO = new ProductRequestDTO
+            {
+                Name = "Product Dumie",
+                Description = "This Description has altered",
+                Price = 1500,
+                Active = true,
+                CategoryId = mockCategory.Id,
+            };
+
+            // Crio um Dummie para a saida esperada de Product
+            var mockProduct = new Product
+            {
+                Id = productId_Dummie,
+                Category = mockCategory,
+                Name = mockProductRequestDTO.Name,
+                Description = mockProductRequestDTO.Description,
+                Price = mockProductRequestDTO.Price,
+                EditedBy = "doe joe",
+                EditedOn = DateTime.Now
+            };
+
+            // Crio comportamentos virtuais para as dependencias
+            // utilizadas no EndPoint ProductPost
+            // Eles vão enganar o endpoint no teste integrado
+
+            //UnitOfWork ------------------------------------------------------------------
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            //O produto simulado é recuperado
+            unitOfWorkMock.Setup(x => x.Products.Get(It.IsAny<Guid>()))
+                                                  .ReturnsAsync(mockProduct);
+
+            //A categoria simulada é recuperada
+            unitOfWorkMock.Setup(x => x.Categories.Get(It.IsAny<Guid>()))
+                                      .ReturnsAsync(mockCategory);
+
+            // Simulo o update da entidade
+            unitOfWorkMock.Setup(x => x.Products.Update(It.IsAny<Product>()))
+                                                .Callback<Product>(p => p.Id = mockProduct.Id);
+
+            //Mapper ------------------------------------------------------------------
+            var mapperMock = new Mock<IMapper>();
+
+            mapperMock.Setup(x => x.Map<Product>(It.IsAny<ProductRequestDTO>()))
+                                    .Returns(mockProduct);
+
+            mapperMock.Setup(x => x.Map<ProductResponseDTO>(It.IsAny<Product>()))
+                                   .Returns(new ProductResponseDTO { Id = mockProduct.Id });
+
+            //Logger ------------------------------------------------------------------
+            var loggerMock = new Mock<ILogger<ProductController>>();
+
+            //Controller------------------------------------------------------------------
+            var productController = new ProductController(loggerMock.Object, mapperMock.Object, unitOfWorkMock.Object);
+
+            // Act
+            var result = await productController.ProductPutAsync(productId_Dummie, mockProductRequestDTO);
+
+            // Assert
+            var createdResult = Assert.IsType<ObjectResult>(result);
+
+            Assert.Equal(StatusCodes.Status200OK, createdResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task ProductPut_NotFound()
+        {
+            // Arrange
+            Guid productId_Dummie = Guid.NewGuid();
+
+            // Crio um Dummie para categoria
+            var mockCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Category Dumie"
+            };
+
+            // Crio um Dummie de input dos dados
+            var mockProductRequestDTO = new ProductRequestDTO
+            {
+                Name = "Product Dumie",
+                Description = "This Description has altered",
+                Price = 1500,
+                Active = true,
+                CategoryId = mockCategory.Id,
+            };
+
+            // Crio um Dummie vazio para a saida esperada de Product
+            var mockProduct = new Product();
+
+            // Crio comportamentos virtuais para as dependencias
+            // utilizadas no EndPoint ProductPost
+            // Eles vão enganar o endpoint no teste integrado
+
+            //UnitOfWork ------------------------------------------------------------------
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            //Forco a simulacao de um retorno nulo do objeto product
+            unitOfWorkMock.Setup(x => x.Products.Get(It.IsAny<Guid>()))
+                                                 .ReturnsAsync((Guid id) => null);
+
+            //A categoria simulada é recuperada
+            unitOfWorkMock.Setup(x => x.Categories.Get(It.IsAny<Guid>()))
+                                      .ReturnsAsync(mockCategory);
+
+            // Simulo o update da entidade
+            unitOfWorkMock.Setup(x => x.Products.Update(It.IsAny<Product>()))
+                                                .Callback<Product>(p => p.Id = mockProduct.Id);
+
+            //Mapper ------------------------------------------------------------------
+            var mapperMock = new Mock<IMapper>();
+
+            mapperMock.Setup(x => x.Map<Product>(It.IsAny<ProductRequestDTO>()))
+                                    .Returns(mockProduct);
+
+            mapperMock.Setup(x => x.Map<ProductResponseDTO>(It.IsAny<Product>()))
+                                   .Returns(new ProductResponseDTO { Id = mockProduct.Id });
+
+            //Logger ------------------------------------------------------------------
+            var loggerMock = new Mock<ILogger<ProductController>>();
+
+            //Controller------------------------------------------------------------------
+            var productController = new ProductController(loggerMock.Object, mapperMock.Object, unitOfWorkMock.Object);
+
+            // Act
+            var result = await productController.ProductPutAsync(productId_Dummie, mockProductRequestDTO);
+
+            // Assert
+            var createdResult = Assert.IsType<ObjectResult>(result);
+
+            Assert.Equal(StatusCodes.Status404NotFound, createdResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task ProductPut_ReturnError_NameNull()
+        {
+            // Arrange
+            Guid productId_Dummie = Guid.NewGuid();
+
+            // Crio um Dummie para categoria
+            var mockCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Category Dumie"
+            };
+
+            // Crio um Dummie de input dos dados com um erro simulado
+            var mockProductRequestDTO = new ProductRequestDTO
+            {
+                Name = null,
+                Description = "Description for product Dumie",
+                Price = 0,
+                Active = true,
+                CategoryId = mockCategory.Id,
+            };
+
+            // Crio um Dummie para a saida Esperada de Product
+            var mockProduct = new Product
+            {
+                Id = Guid.NewGuid(),
+                Category = mockCategory,
+                Name = mockProductRequestDTO.Name,
+                Description = mockProductRequestDTO.Description,
+                Price = mockProductRequestDTO.Price,
+                CreatedBy = "doe joe",
+                CreatedOn = DateTime.Now
+            };
+
+            // Crio comportamentos virtuais para as dependencias
+            // utilizadas no EndPoint ProductPost
+            // Eles vão enganar o endpoint no teste integrado
+
+            //UnitOfWork ------------------------------------------------------------------
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            //O produto simulado é recuperado
+            unitOfWorkMock.Setup(x => x.Products.Get(It.IsAny<Guid>()))
+                                                  .ReturnsAsync(mockProduct);
+
+            //A categoria simulada é recuperada
+            unitOfWorkMock.Setup(x => x.Categories.Get(It.IsAny<Guid>()))
+                                      .ReturnsAsync(mockCategory);
+
+            // Simulo o update da entidade
+            unitOfWorkMock.Setup(x => x.Products.Update(It.IsAny<Product>()))
+                                                .Callback<Product>(p => p.Id = mockProduct.Id);
+
+            //Mapper ------------------------------------------------------------------
+            var mapperMock = new Mock<IMapper>();
+
+            mapperMock.Setup(x => x.Map<Product>(It.IsAny<ProductRequestDTO>()))
+                                    .Returns(mockProduct);
+
+            mapperMock.Setup(x => x.Map<ProductResponseDTO>(It.IsAny<Product>()))
+                                   .Returns(new ProductResponseDTO { Id = mockProduct.Id });
+
+            //Logger ------------------------------------------------------------------
+            var loggerMock = new Mock<ILogger<ProductController>>();
+
+            //Controller------------------------------------------------------------------
+            var productController = new ProductController(loggerMock.Object, mapperMock.Object, unitOfWorkMock.Object);
+
+            // Act
+            var result = await productController.ProductPutAsync(productId_Dummie, mockProductRequestDTO);
+
+            // Assert
+            var createdResult = Assert.IsType<ObjectResult>(result);
+
+            Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task ProductDelete_DeleteWithSucess()
+        {
+            // Arrange
+
+            Guid productId_Dummie = Guid.NewGuid();
+
+            // Crio um Dummie para a recuperadao esperada
+            var mockProduct = new Product
+            {
+                Id = productId_Dummie,
+                Name = "Product Dumie",
+                Description = "Description for product Dumie",
+                Price = 1500,
+                Active = true,
+                CategoryId = Guid.NewGuid(),
+                CreatedBy = "doe joe",
+                CreatedOn = DateTime.Now
+            };
+
+            // Crio comportamentos virtuais para as dependencias
+            // utilizadas no EndPoint ProductPost
+            // Eles vão enganar o endpoint no teste integrado
+
+            //UnitOfWork ------------------------------------------------------------------
+            var unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            //O produto simulado é recuperado
+            unitOfWorkMock.Setup(x => x.Products.Get(It.IsAny<Guid>()))
+                                                  .ReturnsAsync(mockProduct);
+
+            //A criacao do produto é simulada
+            unitOfWorkMock.Setup(x => x.Products.Delete(It.IsAny<Product>()))
+                                                .Callback<Product>(p => p.Id = mockProduct.Id);
+
+            //Mapper ------------------------------------------------------------------
+            var mapperMock = new Mock<IMapper>();
+
+            //Logger ------------------------------------------------------------------
+            var loggerMock = new Mock<ILogger<ProductController>>();
+
+            //Controller------------------------------------------------------------------
+            var productController = new ProductController(loggerMock.Object, mapperMock.Object, unitOfWorkMock.Object);
+
+            // Act
+            var result = await productController.ProductDeleteAsync(productId_Dummie);
+
+            // Assert
+            var createdResult = Assert.IsType<ObjectResult>(result);
+
+            Assert.Equal(StatusCodes.Status200OK, createdResult.StatusCode);
         }
     }
 }

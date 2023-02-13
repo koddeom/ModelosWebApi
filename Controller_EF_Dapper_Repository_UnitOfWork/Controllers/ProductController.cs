@@ -62,7 +62,6 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
                 {
                     StatusCode = StatusCodes.Status400BadRequest
                 };
-
             }
             else
             {
@@ -89,7 +88,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 
             //nao encontrado
             if (product == null)
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                }
+            ;
 
             //Recupero a categoria de forma sincrona
             Category category = await _unitOfWork.Categories.Get(productRequestDTO.CategoryId);
@@ -110,14 +113,20 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             product.Validate();
             if (!product.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
             else
             {
                 _unitOfWork.Products.Update(product);
                 _unitOfWork.Commit();
 
-                return new ObjectResult(Results.Ok());
+                return new ObjectResult(Results.Ok())
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
             }
         }
 
@@ -134,7 +143,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             _unitOfWork.Products.Delete(product);
             _unitOfWork.Commit();
 
-            return new ObjectResult(Results.Ok());
+            return new ObjectResult(Results.Ok())
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
 
         [HttpGet, Route("")]

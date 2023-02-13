@@ -65,7 +65,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             category.Validate();
             if (!category.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
             else
             {
@@ -74,7 +77,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 
                 var categoryResponseDTO = _mapper.Map<CategoryResponseDTO>(category);
 
-                return new ObjectResult(Results.Created($"/categories/{category.Id}", category.Id));
+                return new ObjectResult(Results.Created($"/categories/{category.Id}", category.Id))
+                {
+                    StatusCode = StatusCodes.Status201Created
+                };
             }
         }
 
@@ -90,7 +96,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
 
             //nao encontrado
             if (category == null)
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
 
             category.Name = categoryRequestDTO.Name;
             category.Active = true;
@@ -101,14 +110,20 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             category.Validate();
             if (!category.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
             else
             {
                 _unitOfWork.Categories.Update(category);
                 _unitOfWork.Commit();
 
-                return new ObjectResult(Results.Ok());
+                return new ObjectResult(Results.Ok())
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
             }
         }
 
@@ -127,7 +142,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             _unitOfWork.Categories.Delete(category);
             _unitOfWork.Commit();
 
-            return new ObjectResult(Results.Ok());
+            return new ObjectResult(Results.Ok())
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }

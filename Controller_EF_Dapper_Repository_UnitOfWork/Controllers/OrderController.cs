@@ -54,7 +54,10 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
                                                                                     .Contains(p.Id));
 
             if (orderProducts == null)
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
 
             //Total gasto
             decimal total = 0;
@@ -76,14 +79,20 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             order.Validate();
             if (!order.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(order.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(order.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
             else
             {
                 await _unitOfWork.Orders.Add(order);
                 _unitOfWork.Commit();
 
-                return new ObjectResult(Results.Created($"/orders/{order.Id}", order.Id));
+                return new ObjectResult(Results.Created($"/orders/{order.Id}", order.Id))
+                {
+                    StatusCode = StatusCodes.Status201Created
+                };
             }
         }
     }
