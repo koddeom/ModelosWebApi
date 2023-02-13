@@ -3,23 +3,23 @@ using Minimal_EF_Dapper.Domain.Database.BaseEntity;
 
 namespace Minimal_EF_Dapper.Domain.Database.Entities.Product
 {
-    public class Product : Entity
+    public  class  Product : Entity
     {
         // usar private no set restringe o acesso
         // aos metodos somente pelo construtor da classe
 
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public Decimal Price { get; private set; }
-        public bool Active { get; private set; } = true;
+        public string Name { get;  set; }
+        public string Description { get;  set; }
+        public Decimal Price { get; set; }
+        public bool Active { get; set; } = true;
 
         //Categorias -------------------------------------------------
-        public Guid CategoryId { get; private set; }
+        public Guid CategoryId { get; set; }
 
-        public Category Category { get; private set; }
+        public Category Category { get; set; }
 
         //Pedidos ----------------------------------------------------
-        public ICollection<Order> Orders { get; private set; }
+        public ICollection<Order> Orders { get; set; }
 
         public Product()
         {
@@ -43,7 +43,7 @@ namespace Minimal_EF_Dapper.Domain.Database.Entities.Product
             AddNotifications(contract);
         }
 
-        public void AddProduct(string name,
+        public virtual void AddProduct(string name,
                                string description,
                                Decimal price,
                                bool active,
@@ -64,7 +64,7 @@ namespace Minimal_EF_Dapper.Domain.Database.Entities.Product
             Validate();
         }
 
-        public void EditProduct(string name,
+        public virtual void EditProduct(string name,
                                 Decimal price,
                                 bool active,
                                 Category category,

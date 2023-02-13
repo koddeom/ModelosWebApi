@@ -10,9 +10,16 @@ namespace Minimal_EF_Dapper.Domain.Database
         //TABELAS MAPEADAS
         //------------------------------------------------------------------------
 
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Order> Orders { get; set; }
+        //==> Virtual pe necessario para o uso de Moq no teste unitário
+
+        public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
+
+        public ApplicationDbContext()
+        {
+            //Necessario para que o contexto possa ser mokado no teste unitário
+        }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

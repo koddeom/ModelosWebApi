@@ -27,8 +27,8 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
             //Recupero a categoria de forma sincrona
             var category = await dbContext.Categories.FirstOrDefaultAsync(c => c.Id == productRequestDTO.CategoryId);
 
-            var product = new Product();
-
+            var product = new Product(); 
+            
             product.AddProduct(productRequestDTO.Name,
                                 productRequestDTO.Description,
                                 productRequestDTO.Price,

@@ -1,10 +1,11 @@
 ﻿namespace Minimal_EF_Dapper.Endpoints.DTO.Product
 {
-    public record ProductRequestDTO(
-        string Name,
-        string Description,
-        decimal Price,
-        bool Active,
-        Guid CategoryId
-    );
+    public class ProductRequestDTO
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public bool Active { get; set; }
+        public Guid CategoryId { get; set; }
+    }
 }

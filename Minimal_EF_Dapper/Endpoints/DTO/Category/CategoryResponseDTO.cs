@@ -1,15 +1,16 @@
 ﻿namespace Minimal_EF_Dapper.Endpoints.DTO.Category
 {
-    public record CategoryResponseDTO(
-     Guid Id,
-     string Name,
-     bool Active
-    );
+    public class CategoryResponseDTO
+    {
+        public CategoryResponseDTO(Guid id, string name, bool active)
+        {
+            Id = id;
+            Name = name;
+            Active = active;
+        }
 
-    //public class CategoryResponseDTO
-    //{
-    //    public Guid Id { get; set; }
-    //    public string Name { get; set; }
-    //    public bool Active { get; set; }
-    //}
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public bool Active { get; set; }
+    }
 }
