@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Controller_EF_Dapper_Repository_UnitOfWork\Controller_EF_Dapper_Repository_UnityOfWork.csproj" />
+    <ProjectReference Include="..\..\src\Controller_EF_Dapper_Repository_UnitOfWork\Controller_EF_Dapper_Repository_UnityOfWork.csproj" />
   </ItemGroup>
-
 </Project>

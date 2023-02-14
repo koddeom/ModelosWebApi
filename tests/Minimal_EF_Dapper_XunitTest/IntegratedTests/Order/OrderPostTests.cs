@@ -1,9 +1,9 @@
 namespace Minimal_EF_Dapper_XunitTest
 {
-    public class UnitTest1
+    public class OrderPostTest
     {
         [Fact]
-        public void Test1()
+        public void OderPostTest()
         {
         }
     }
