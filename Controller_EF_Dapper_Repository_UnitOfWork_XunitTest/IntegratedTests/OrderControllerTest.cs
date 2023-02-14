@@ -120,13 +120,13 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await orderController.OrderPost(mockOrderRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
             //Obtendo o valor de "Location" Por reflexao
-            var locationProperty = createdResult.Value.GetType().GetProperty("Location");
-            var locationValue = locationProperty.GetValue(createdResult.Value);
+            var locationProperty = objectResult.Value.GetType().GetProperty("Location");
+            var locationValue = locationProperty.GetValue(objectResult.Value);
 
-            Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status201Created, objectResult.StatusCode);
 
             Assert.Equal($"/orders/{mockOrder.Id}", locationValue);
         }
@@ -201,8 +201,8 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await orderController.OrderPost(mockOrderRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status404NotFound, createdResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
     }
 }

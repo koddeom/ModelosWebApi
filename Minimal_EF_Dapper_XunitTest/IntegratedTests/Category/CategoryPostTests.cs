@@ -5,7 +5,6 @@ namespace Minimal_EF_Dapper_XunitTest
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

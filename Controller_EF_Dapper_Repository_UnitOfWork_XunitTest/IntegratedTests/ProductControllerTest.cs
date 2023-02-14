@@ -94,13 +94,13 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await productController.ProductPost(mockProductRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
             //Obtendo o valor de "Location" Por reflexao
-            var locationProperty = createdResult.Value.GetType().GetProperty("Location");
-            var locationValue = locationProperty.GetValue(createdResult.Value);
+            var locationProperty = objectResult.Value.GetType().GetProperty("Location");
+            var locationValue = locationProperty.GetValue(objectResult.Value);
 
-            Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status201Created, objectResult.StatusCode);
 
             Assert.Equal($"/products/{mockProduct.Id}", locationValue);
         }
@@ -171,8 +171,8 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await productController.ProductPost(mockProductRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         }
 
         [Fact]
@@ -248,9 +248,9 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await productController.ProductPutAsync(productId_Dummie, mockProductRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status200OK, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
         }
 
         [Fact]
@@ -317,13 +317,13 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await productController.ProductPutAsync(productId_Dummie, mockProductRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status404NotFound, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
 
         [Fact]
-        public async Task ProductPut_ReturnError_NameNull()
+        public async Task ProductPut_ReturnError_NameIsNull()
         {
             // Arrange
             Guid productId_Dummie = Guid.NewGuid();
@@ -395,9 +395,9 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await productController.ProductPutAsync(productId_Dummie, mockProductRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         }
 
         [Fact]
@@ -448,9 +448,9 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await productController.ProductDeleteAsync(productId_Dummie);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status200OK, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
         }
     }
 }

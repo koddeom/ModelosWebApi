@@ -1,11 +1,10 @@
 namespace Minimal_EF_Dapper_XunitTest
 {
-    public class UnitTest1
+    public class CategoryDeleteTests
     {
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

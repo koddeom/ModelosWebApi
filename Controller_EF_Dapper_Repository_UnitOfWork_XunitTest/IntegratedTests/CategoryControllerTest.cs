@@ -78,13 +78,13 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await categoryController.CategoryPost(mockCategoryRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
             //Obtendo o valor de "Location" Por reflexao
-            var locationProperty = createdResult.Value.GetType().GetProperty("Location");
-            var locationValue = locationProperty.GetValue(createdResult.Value);
+            var locationProperty = objectResult.Value.GetType().GetProperty("Location");
+            var locationValue = locationProperty.GetValue(objectResult.Value);
 
-            Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status201Created, objectResult.StatusCode);
 
             Assert.Equal($"/categories/{mockCategory.Id}", locationValue);
         }
@@ -141,8 +141,8 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await categoryController.CategoryPost(mockCategoryRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         }
 
         [Fact]
@@ -202,9 +202,9 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await categoryController.CategoryPutAsync(categoryId_Dummie, mockCategoryRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status200OK, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
         }
 
         [Fact]
@@ -257,13 +257,13 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await categoryController.CategoryPutAsync(categoryId_Dummie, mockCategoryRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status404NotFound, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
 
         [Fact]
-        public async Task CategoryPut_ReturnErrorNameNull()
+        public async Task CategoryPut_ReturnErrorNameIsNull()
         {
             // Arrange
             Guid categoryId_Dummie = Guid.NewGuid();
@@ -319,9 +319,9 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await categoryController.CategoryPutAsync(categoryId_Dummie, mockCategoryRequestDTO);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         }
 
         [Fact]
@@ -368,9 +368,9 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var result = await categoryController.CategoryDeleteAsync(categoryId_Dummie);
 
             // Assert
-            var createdResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
 
-            Assert.Equal(StatusCodes.Status200OK, createdResult.StatusCode);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
         }
     }
 }

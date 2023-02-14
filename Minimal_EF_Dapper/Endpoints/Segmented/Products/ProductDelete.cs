@@ -14,20 +14,26 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         //Observacao: IResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
-        public static IResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
+        public static IActionResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
         {
             //Recupero o produto do banco
             var product = dbContext.Products.FirstOrDefault(c => c.Id == id);
 
             if (product == null)
             {
-                return Results.NotFound();
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             dbContext.Products.Remove(product);
             dbContext.SaveChanges();
 
-            return Results.Ok();
+            return new ObjectResult(Results.Ok())
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }

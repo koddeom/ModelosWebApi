@@ -5,8 +5,8 @@ namespace Minimal_EF_Dapper.Domain.Database.Entities.Product
 {
     public class Category : Entity
     {
-        public string Name { get;  set; }
-        public bool Active { get;  set; }
+        public string Name { get; set; }
+        public bool Active { get; set; }
 
         private void Validate()
         {

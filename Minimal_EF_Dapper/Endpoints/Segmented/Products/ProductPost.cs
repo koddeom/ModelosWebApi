@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
 using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Domain.Database.Entities.Product;
@@ -17,7 +18,7 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
-        public static async Task<IResult> Action(ProductRequestDTO productRequestDTO,
+        public static async Task<IActionResult> Action(ProductRequestDTO productRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
         {
@@ -27,8 +28,8 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
             //Recupero a categoria de forma sincrona
             var category = await dbContext.Categories.FirstOrDefaultAsync(c => c.Id == productRequestDTO.CategoryId);
 
-            var product = new Product(); 
-            
+            var product = new Product();
+
             product.AddProduct(productRequestDTO.Name,
                                 productRequestDTO.Description,
                                 productRequestDTO.Price,
@@ -39,13 +40,19 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
 
             if (!product.IsValid)
             {
-                return Results.ValidationProblem(product.Notifications.ConvertToErrorDetails());
+                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             await dbContext.Products.AddAsync(product);
             dbContext.SaveChanges();
 
-            return Results.Created($"/products/{product.Id}", product.Id);
+            return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id))
+            {
+                StatusCode = StatusCodes.Status201Created
+            };
         }
     }
 }

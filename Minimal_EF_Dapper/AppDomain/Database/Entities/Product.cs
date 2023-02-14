@@ -3,13 +3,13 @@ using Minimal_EF_Dapper.Domain.Database.BaseEntity;
 
 namespace Minimal_EF_Dapper.Domain.Database.Entities.Product
 {
-    public  class  Product : Entity
+    public class Product : Entity
     {
         // usar private no set restringe o acesso
         // aos metodos somente pelo construtor da classe
 
-        public string Name { get;  set; }
-        public string Description { get;  set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public Decimal Price { get; set; }
         public bool Active { get; set; } = true;
 

@@ -16,7 +16,7 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         //Observacao: IResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
-        public static IResult Action([FromRoute] Guid id,
+        public static IActionResult Action([FromRoute] Guid id,
                                                  ProductRequestDTO productRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
@@ -29,7 +29,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
 
             if (product == null)
             {
-                return Results.NotFound();
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             //Recupero a categoria de forma sincrona
@@ -37,7 +40,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
 
             if (category == null)
             {
-                return Results.NotFound();
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             product.EditProduct(productRequestDTO.Name,
@@ -49,12 +55,18 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
 
             if (!product.IsValid)
             {
-                return Results.ValidationProblem(product.Notifications.ConvertToErrorDetails());
+                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             dbContext.SaveChanges();
 
-            return Results.Ok();
+            return new ObjectResult(Results.Ok())
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }
