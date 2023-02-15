@@ -1,4 +1,4 @@
-﻿namespace Controller_EF_Dapper.Endpoints.Orders.DTO
+﻿namespace Controller_EF_Dapper.Endpoints.DTO.Order
 {
     public record OrderRequestDTO(
         List<Guid> ProductListIds

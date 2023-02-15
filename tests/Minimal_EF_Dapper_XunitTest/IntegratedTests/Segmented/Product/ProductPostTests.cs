@@ -101,8 +101,8 @@ namespace Minimal_EF_Dapper_XunitTest
             var objectResponse = (ObjectResult)result;
 
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status201Created, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status201Created, objectResult.StatusCode);
         }
 
         [Fact]
@@ -133,8 +133,8 @@ namespace Minimal_EF_Dapper_XunitTest
             var result = await ProductPost.Action(mockProductRequestDTO, _httpContextMock, _dbContextMock);
 
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status400BadRequest, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         }
     }
 }

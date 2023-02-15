@@ -1,13 +1,13 @@
-﻿using Controller_EF_Dapper.AppDomain.Database.BaseEntity;
-using Flunt.Validations;
+﻿using Flunt.Validations;
+using Controler_EF_Dapper.Domain.Database.BaseEntity;
 
-namespace Controller_EF_Dapper.Domain.Database.Entities.Product
+namespace Controler_EF_Dapper.Domain.Database.Entities.Product
 {
     public class Order : Entity
     {
-        public string ClientId { get; private set; }
-        public string ClientName { get; private set; }
-        public List<Product> Products { get; private set; }
+        public string ClientId { get;  set; }
+        public string ClientName { get;  set; }
+        public List<Product> Products { get; set; }
         public decimal Total { get; set; }
 
         private void Validate()

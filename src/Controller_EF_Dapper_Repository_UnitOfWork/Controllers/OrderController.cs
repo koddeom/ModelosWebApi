@@ -53,7 +53,7 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
                 orderProducts = await _unitOfWork.Products.Find(p => orderRequestDTO.ProductsId
                                                                                     .Contains(p.Id));
 
-            if (orderProducts == null)
+            if (orderProducts == null || orderProducts.Count == 0)
                 return new ObjectResult(Results.NotFound())
                 {
                     StatusCode = StatusCodes.Status404NotFound

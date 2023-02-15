@@ -1,7 +1,8 @@
-﻿namespace Controller_EF_Dapper.Endpoints.Categories.DTO
+﻿namespace Controller_EF_Dapper.Endpoints.DTO.Category
 {
-    public record CategoryRequestDTO(
-        String Name,
-        bool Active
-    );
+    public class CategoryRequestDTO
+    {
+        public String Name { get; set; }
+        public bool Active { get; set; }
+    }
 }

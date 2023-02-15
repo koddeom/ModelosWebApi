@@ -7,6 +7,10 @@ namespace Controller_EF_Dapper.Business
 {
     public class ServiceAllProductsSold : IServiceAllProductSold
     {
+        public ServiceAllProductsSold()
+        {
+                
+        }
         public ServiceAllProductsSold(IConfiguration configuration)
         {
             //Necessario para recuperar as configuracoes de conexao para

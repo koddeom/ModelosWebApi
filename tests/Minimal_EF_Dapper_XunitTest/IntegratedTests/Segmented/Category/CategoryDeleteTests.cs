@@ -49,8 +49,8 @@ namespace Minimal_EF_Dapper_XunitTest
             // Act
             var result = CategoryDelete.Action(dummie_CategoryId, _dbContextMock);
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status200OK, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
         }
 
         [Fact]
@@ -79,8 +79,8 @@ namespace Minimal_EF_Dapper_XunitTest
             var result = CategoryDelete.Action(dummie_CategoryId, _dbContextMock);
 
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status404NotFound, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
     }
 }

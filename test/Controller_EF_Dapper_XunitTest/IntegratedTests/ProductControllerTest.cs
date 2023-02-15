@@ -1,13 +1,15 @@
+using Controler_EF_Dapper.Domain.Database;
+using Controler_EF_Dapper.Domain.Database.Entities.Product;
+using Controller_EF_Dapper.Business;
+using Controller_EF_Dapper.Controllers;
+using Controller_EF_Dapper.Endpoints.DTO.Product;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Minimal_EF_Dapper.Domain.Database;
-using Minimal_EF_Dapper.Domain.Database.Entities.Product;
-using Minimal_EF_Dapper.Endpoints.DTO.Product;
-using Minimal_EF_Dapper.Endpoints.Unified.Direct;
+using Microsoft.Extensions.Logging;
 using MockQueryable.NSubstitute;
 using NSubstitute;
 
-namespace Minimal_EF_Dapper_XunitTest
+namespace Controller_EF_Dapper_XunitTest
 {
     //==================================================================================================
     // Caso especial
@@ -49,16 +51,22 @@ namespace Minimal_EF_Dapper_XunitTest
     // PAU NO SEU CU UNCLE BOB
     //==================================================================================================
 
-    public class TestableProductModuleTests
+    public class ProductControllerTests
     {
+        private readonly ILogger<ProductController> _loggerMock;
         private readonly ApplicationDbContext _dbContextMock;
-        private readonly HttpContext _httpContextMock;
+        private readonly ServiceAllProductsSold _serviceAllProductsSoldMock;
 
-        public TestableProductModuleTests()
+        private readonly ProductController _productControllerMock;
+
+        public ProductControllerTests()
         {
             // Configura o mock dos contextos
+            _loggerMock = Substitute.For<ILogger<ProductController>>();
             _dbContextMock = Substitute.For<ApplicationDbContext>();
-            _httpContextMock = Substitute.For<HttpContext>();
+            _serviceAllProductsSoldMock = Substitute.For<ServiceAllProductsSold>();
+
+            _productControllerMock = new ProductController(_loggerMock, _dbContextMock, _serviceAllProductsSoldMock);
         }
 
         [Fact]
@@ -96,7 +104,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act ----------------------------------------------------------------------------------------------------
-            var result = await TestableProductModule.FromModuleProductPost(mockProductRequestDTO, _httpContextMock, _dbContextMock);
+            var result = await _productControllerMock.ProductPost(mockProductRequestDTO);
 
             var objectResponse = (ObjectResult)result;
 
@@ -130,7 +138,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(categoryQueryable);
 
             // Act
-            var result = await TestableProductModule.FromModuleProductPost(mockProductRequestDTO, _httpContextMock, _dbContextMock);
+            var result = await _productControllerMock.ProductPost(mockProductRequestDTO);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
@@ -188,10 +196,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableProductModule.FromModuleProductPut(dummie_ProductId,
-                                           mockProductRequestDTO,
-                                           _httpContextMock,
-                                           _dbContextMock);
+            var result = _productControllerMock.ProductPut(dummie_ProductId, mockProductRequestDTO);
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
@@ -257,10 +263,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableProductModule.FromModuleProductPut(dummie_ProductId,
-                                           mockProductRequestDTO,
-                                           _httpContextMock,
-                                           _dbContextMock);
+            var result = _productControllerMock.ProductPut(dummie_ProductId, mockProductRequestDTO);
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
@@ -309,7 +313,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableProductModule.FromModuleProductDelete(dummie_ProductId, _dbContextMock);
+            var result = _productControllerMock.ProductDelete(dummie_ProductId);
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
@@ -358,7 +363,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableProductModule.FromModuleProductDelete(dummie_ProductId, _dbContextMock);
+            var result = _productControllerMock.ProductDelete(dummie_ProductId);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);

@@ -78,8 +78,8 @@ namespace Minimal_EF_Dapper_XunitTest
                                            _httpContextMock,
                                            _dbContextMock);
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status200OK, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
 
             //Testes adiconais possiveis
             //------------------------------------------------------------------------------------------------------
@@ -147,8 +147,8 @@ namespace Minimal_EF_Dapper_XunitTest
                                            _httpContextMock,
                                            _dbContextMock);
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status400BadRequest, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         }
     }
 }

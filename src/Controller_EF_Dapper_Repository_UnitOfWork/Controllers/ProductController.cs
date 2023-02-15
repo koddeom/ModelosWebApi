@@ -34,7 +34,11 @@ namespace Controller_EF_Dapper_Repository_UnityOfWork.Controllers
             var product = await _unitOfWork.Products.Get(id);
 
             if (product == null)
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
+
 
             var productResponseDTO = _mapper.Map<ProductResponseDTO>(product);
             return new ObjectResult(productResponseDTO);

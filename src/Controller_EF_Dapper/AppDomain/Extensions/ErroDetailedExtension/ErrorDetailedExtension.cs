@@ -1,7 +1,7 @@
 ﻿using Flunt.Notifications;
 using Microsoft.AspNetCore.Identity;
 
-namespace Controller_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension
+namespace Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension
 {
     //----------------------------------------------------------------------------------------------
     // Extensao de apoio a notifcação de erros padrao do Asp.net

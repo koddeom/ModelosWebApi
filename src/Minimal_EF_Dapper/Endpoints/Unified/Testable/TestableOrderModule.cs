@@ -59,7 +59,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
                 orderProducts = dbContext.Products.Where(p => orderRequestDTO.ProductListIds
                                                                            .Contains(p.Id))
                                                                            .ToList();
-            if (orderProducts == null)
+            if (orderProducts == null || orderProducts.Count == 0)
             {
                 return new ObjectResult(Results.NotFound())
                 {

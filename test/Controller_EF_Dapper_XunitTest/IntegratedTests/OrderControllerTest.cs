@@ -1,24 +1,29 @@
+using Controler_EF_Dapper.Domain.Database;
+using Controler_EF_Dapper.Domain.Database.Entities.Product;
+using Controller_EF_Dapper.Controllers;
+using Controller_EF_Dapper.Endpoints.DTO.Order;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Minimal_EF_Dapper.Domain.Database;
-using Minimal_EF_Dapper.Domain.Database.Entities.Product;
-using Minimal_EF_Dapper.Endpoints.DTO.Order;
-using Minimal_EF_Dapper.Endpoints.Unified.Direct;
+using Microsoft.Extensions.Logging;
 using MockQueryable.NSubstitute;
 using NSubstitute;
 
-namespace Minimal_EF_Dapper_XunitTest
+namespace Controller_EF_Dapper_XunitTest
 {
-    public class TestableOrderModuleTests
+    public class OrderControllerTests
     {
+        private readonly ILogger<OrderController> _loggerMock;
         private readonly ApplicationDbContext _dbContextMock;
-        private readonly HttpContext _httpContextMock;
 
-        public TestableOrderModuleTests()
+        private readonly OrderController _orderControllerMock;
+
+        public OrderControllerTests()
         {
             // Configura o mock dos contextos
+            _loggerMock = Substitute.For<ILogger<OrderController>>();
             _dbContextMock = Substitute.For<ApplicationDbContext>();
-            _httpContextMock = Substitute.For<HttpContext>();
+
+            _orderControllerMock = new OrderController(_loggerMock, _dbContextMock);
         }
 
         [Fact]
@@ -100,7 +105,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Products.Returns(mockProductsQueryable);
 
             // Act ----------------------------------------------------------------------------------------------------
-            var result = await TestableOrderModule.FromModuleOrderPost(mockOrderRequestDTO, _httpContextMock, _dbContextMock);
+            var result = await _orderControllerMock.OrderPost(mockOrderRequestDTO);
 
             var objectResponse = (ObjectResult)result;
 
@@ -167,7 +172,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Products.Returns(mockProductsQueryable);
 
             // Act ----------------------------------------------------------------------------------------------------
-            var result = await TestableOrderModule.FromModuleOrderPost(mockOrderRequestDTO, _httpContextMock, _dbContextMock);
+            var result = await _orderControllerMock.OrderPost(mockOrderRequestDTO);
 
             var objectResponse = (ObjectResult)result;
 

@@ -1,8 +1,8 @@
-﻿using Controller_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
-using Controller_EF_Dapper.Domain.Database;
-using Controller_EF_Dapper.Domain.Database.Entities.Product;
-using Controller_EF_Dapper.Endpoints.Orders.DTO;
+﻿using Controler_EF_Dapper.Domain.Database;
+using Controler_EF_Dapper.Domain.Database.Entities.Product;
+using Controller_EF_Dapper.Endpoints.DTO.Order;
 using Microsoft.AspNetCore.Mvc;
+using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
 
 namespace Controller_EF_Dapper.Controllers
 {
@@ -59,9 +59,12 @@ namespace Controller_EF_Dapper.Controllers
                 orderProducts = _dbContext.Products.Where(p => orderRequestDTO.ProductListIds
                                                                            .Contains(p.Id))
                                                                            .ToList();
-            if (orderProducts == null)
+            if (orderProducts == null || orderProducts.Count == 0)
             {
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             var order = new Order();
@@ -70,62 +73,19 @@ namespace Controller_EF_Dapper.Controllers
 
             if (!order.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(order.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(order.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             await _dbContext.Orders.AddAsync(order);
             await _dbContext.SaveChangesAsync();
 
-            return new ObjectResult(Results.Created($"/orders/{order.Id}", order.Id));
+            return new ObjectResult(Results.Created($"/orders/{order.Id}", order.Id))
+            {
+                StatusCode = StatusCodes.Status201Created
+            };
         }
     }
 }
-
-//[HttpPost]
-//public IActionResult Create([FromBody] TodoItem item)
-//{
-//    if (item == null)
-//    {
-//        return BadRequest();
-//    }
-//    TodoItems.Add(item);
-//    return CreatedAtRoute("GetTodo", new { id = item.Key }, item);
-//}
-
-//[HttpPut("{id}")]
-//public IActionResult Update(string id, [FromBody] TodoItem item)
-//{
-//    if (item == null || item.Key != id)
-//    {
-//        return BadRequest();
-//    }
-//    var todo = TodoItems.Find(id);
-//    if (todo == null)
-//    {
-//        return NotFound();
-//    }
-//    TodoItems.Update(item);
-//    return new NoContentResult();
-//}
-
-//[HttpDelete("{id}")]
-//public void Delete(string id)
-//{
-//    TodoItems.Remove(id);
-//}
-
-//public IEnumerable<TodoItem> GetAll()
-//{
-//    return TodoItems.GetAll();
-//}
-
-//[HttpGet("{id}", Name = "GetTodo")]
-//public IActionResult GetById(string id)
-//{
-//    var item = TodoItems.Find(id);
-//    if (item == null)
-//    {
-//        return NotFound();
-//    }
-//    return new ObjectResult(item);
-//}

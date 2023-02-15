@@ -1,10 +1,10 @@
-﻿using Controller_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
+﻿using Controler_EF_Dapper.Domain.Database;
+using Controler_EF_Dapper.Domain.Database.Entities.Product;
 using Controller_EF_Dapper.Business;
-using Controller_EF_Dapper.Domain.Database;
-using Controller_EF_Dapper.Domain.Database.Entities.Product;
-using Controller_EF_Dapper.Endpoints.Products.DTO;
+using Controller_EF_Dapper.Endpoints.DTO.Product;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
 
 namespace Controller_EF_Dapper.Controllers
 {
@@ -93,21 +93,26 @@ namespace Controller_EF_Dapper.Controllers
                                 category,
                                 user
                                 );
-
             if (!product.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             await _dbContext.Products.AddAsync(product);
             _dbContext.SaveChanges();
 
-            return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id));
+            return new ObjectResult(Results.Created($"/products/{product.Id}", product.Id))
+            {
+                StatusCode = StatusCodes.Status201Created
+            };
         }
 
         [HttpPut, Route("{id:guid}")]
         public IActionResult ProductPut([FromRoute] Guid id,
-                                         ProductRequestDTO productRequestDTO)
+                                             ProductRequestDTO productRequestDTO)
         {
             //Usuario fixo, mas  poderia vir de um identity
             string user = "doe joe";
@@ -117,7 +122,10 @@ namespace Controller_EF_Dapper.Controllers
 
             if (product == null)
             {
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             //Recupero a categoria de forma sincrona
@@ -125,7 +133,10 @@ namespace Controller_EF_Dapper.Controllers
 
             if (category == null)
             {
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             product.EditProduct(productRequestDTO.Name,
@@ -137,12 +148,18 @@ namespace Controller_EF_Dapper.Controllers
 
             if (!product.IsValid)
             {
-                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()));
+                return new ObjectResult(Results.ValidationProblem(product.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             _dbContext.SaveChanges();
 
-            return new ObjectResult(Results.Ok());
+            return new ObjectResult(Results.Ok())
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
 
         [HttpDelete, Route("{id:guid}")]
@@ -153,62 +170,19 @@ namespace Controller_EF_Dapper.Controllers
 
             if (product == null)
             {
-                return new ObjectResult(Results.NotFound());
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             _dbContext.Products.Remove(product);
             _dbContext.SaveChanges();
 
-            return new ObjectResult(Results.Ok());
+            return new ObjectResult(Results.Ok())
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }
-
-//[HttpPost]
-//public IActionResult Create([FromBody] TodoItem item)
-//{
-//    if (item == null)
-//    {
-//        return BadRequest();
-//    }
-//    TodoItems.Add(item);
-//    return CreatedAtRoute("GetTodo", new { id = item.Key }, item);
-//}
-
-//[HttpPut("{id}")]
-//public IActionResult Update(string id, [FromBody] TodoItem item)
-//{
-//    if (item == null || item.Key != id)
-//    {
-//        return BadRequest();
-//    }
-//    var todo = TodoItems.Find(id);
-//    if (todo == null)
-//    {
-//        return NotFound();
-//    }
-//    TodoItems.Update(item);
-//    return new NoContentResult();
-//}
-
-//[HttpDelete("{id}")]
-//public void Delete(string id)
-//{
-//    TodoItems.Remove(id);
-//}
-
-//public IEnumerable<TodoItem> GetAll()
-//{
-//    return TodoItems.GetAll();
-//}
-
-//[HttpGet("{id}", Name = "GetTodo")]
-//public IActionResult GetById(string id)
-//{
-//    var item = TodoItems.Find(id);
-//    if (item == null)
-//    {
-//        return NotFound();
-//    }
-//    return new ObjectResult(item);
-//}

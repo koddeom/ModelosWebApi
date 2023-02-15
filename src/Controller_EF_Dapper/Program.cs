@@ -1,5 +1,5 @@
+using Controler_EF_Dapper.Domain.Database;
 using Controller_EF_Dapper.Business;
-using Controller_EF_Dapper.Domain.Database;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Serilog;

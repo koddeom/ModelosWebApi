@@ -1,12 +1,12 @@
-﻿using Controller_EF_Dapper.AppDomain.Database.BaseEntity;
-using Flunt.Validations;
+﻿using Flunt.Validations;
+using Controler_EF_Dapper.Domain.Database.BaseEntity;
 
-namespace Controller_EF_Dapper.Domain.Database.Entities.Product
+namespace Controler_EF_Dapper.Domain.Database.Entities.Product
 {
     public class Category : Entity
     {
-        public string Name { get; private set; }
-        public bool Active { get; private set; }
+        public string Name { get; set; }
+        public bool Active { get; set; }
 
         private void Validate()
         {

@@ -1,6 +1,6 @@
 ﻿using Flunt.Notifications;
 
-namespace Controller_EF_Dapper.AppDomain.Database.BaseEntity
+namespace Controler_EF_Dapper.Domain.Database.BaseEntity
 {
     public abstract class Entity : Notifiable<Notification>
     {

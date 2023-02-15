@@ -1,24 +1,29 @@
+using Controler_EF_Dapper.Domain.Database;
+using Controler_EF_Dapper.Domain.Database.Entities.Product;
+using Controller_EF_Dapper.Controllers;
+using Controller_EF_Dapper.Endpoints.DTO.Category;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Minimal_EF_Dapper.Domain.Database;
-using Minimal_EF_Dapper.Domain.Database.Entities.Product;
-using Minimal_EF_Dapper.Endpoints.DTO.Category;
-using Minimal_EF_Dapper.Endpoints.Unified.Direct;
+using Microsoft.Extensions.Logging;
 using MockQueryable.NSubstitute;
 using NSubstitute;
 
-namespace Minimal_EF_Dapper_XunitTest
+namespace Controller_EF_Dapper_XunitTest
 {
-    public class TestableCategoryModuleTests
+    public class CategoryControllerTests
     {
+        private readonly ILogger<CategoryController> _loggerMock;
         private readonly ApplicationDbContext _dbContextMock;
-        private readonly HttpContext _httpContextMock;
 
-        public TestableCategoryModuleTests()
+        private readonly CategoryController _categoryControllerMock;
+
+        public CategoryControllerTests()
         {
             // Configura o mock dos contextos
+            _loggerMock = Substitute.For<ILogger<CategoryController>>();
             _dbContextMock = Substitute.For<ApplicationDbContext>();
-            _httpContextMock = Substitute.For<HttpContext>();
+
+            _categoryControllerMock = new CategoryController(_loggerMock, _dbContextMock);
         }
 
         [Fact]
@@ -54,7 +59,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act ----------------------------------------------------------------------------------------------------
-            var result = await TestableCategoryModule.FromModuleCategoryPost(mockCategoryRequestDTO, _httpContextMock, _dbContextMock);
+            var result = await _categoryControllerMock.CategoryPost(mockCategoryRequestDTO);
 
             var objectResponse = (ObjectResult)result;
 
@@ -87,7 +92,7 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(categoryQueryable);
 
             // Act
-            var result = await TestableCategoryModule.FromModuleCategoryPost(mockCategoryRequestDTO, _httpContextMock, _dbContextMock);
+            var result = await _categoryControllerMock.CategoryPost(mockCategoryRequestDTO);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
@@ -130,10 +135,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableCategoryModule.FromModuleCategoryPut(dummie_CategoryId,
-                                           mockCategoryRequestDTO,
-                                           _httpContextMock,
-                                           _dbContextMock);
+            var result = _categoryControllerMock.CategoryPut(dummie_CategoryId, mockCategoryRequestDTO);
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
@@ -168,10 +171,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableCategoryModule.FromModuleCategoryPut(dummie_CategoryId,
-                                           mockCategoryRequestDTO,
-                                           _httpContextMock,
-                                           _dbContextMock);
+            var result = _categoryControllerMock.CategoryPut(dummie_CategoryId, mockCategoryRequestDTO);
+            
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
@@ -213,10 +214,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableCategoryModule.FromModuleCategoryPut(dummie_CategoryId,
-                                           mockCategoryRequestDTO,
-                                           _httpContextMock,
-                                           _dbContextMock);
+            var result = _categoryControllerMock.CategoryPut(dummie_CategoryId, mockCategoryRequestDTO);
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
@@ -249,7 +248,8 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableCategoryModule.FromModuleCategoryDelete(dummie_CategoryId, _dbContextMock);
+            var result = _categoryControllerMock.CategoryDelete(dummie_CategoryId);
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status200OK, objectResult.StatusCode);
@@ -278,11 +278,12 @@ namespace Minimal_EF_Dapper_XunitTest
             _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = TestableCategoryModule.FromModuleCategoryDelete(dummie_CategoryId, _dbContextMock);
+            var result = _categoryControllerMock.CategoryDelete(dummie_CategoryId);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
+
     }
 }

@@ -105,8 +105,8 @@ namespace Minimal_EF_Dapper_XunitTest
             var objectResponse = (ObjectResult)result;
 
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status201Created, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status201Created, objectResult.StatusCode);
         }
 
         [Fact]
@@ -172,8 +172,8 @@ namespace Minimal_EF_Dapper_XunitTest
             var objectResponse = (ObjectResult)result;
 
             // Assert
-            var ObjectResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status404NotFound, ObjectResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
     }
 }
