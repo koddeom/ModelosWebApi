@@ -8,7 +8,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
 {
     public static class OrderModule
     {
-        public static void AddOrderEndPoints(this IEndpointRouteBuilder app)
+        public static void AddOrdersEndPoints(this IEndpointRouteBuilder app)
         {
             //Get
             app.MapGet("unified/Order/{id:guid}", ([FromRoute] Guid id,

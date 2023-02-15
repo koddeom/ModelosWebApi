@@ -9,7 +9,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
 {
     public static class CategoryModule
     {
-        public static void AddCategoryEndPoints(this IEndpointRouteBuilder app)
+        public static void AddCategoriesEndPoints(this IEndpointRouteBuilder app)
         {
             //Get
             app.MapGet("unified/Category/{id:guid}", ([FromRoute] Guid id, ApplicationDbContext dbContext) =>

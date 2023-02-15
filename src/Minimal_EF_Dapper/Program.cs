@@ -116,12 +116,14 @@ app.MapMethods(OrderGet.Template, OrderGet.Methods, OrderGet.Handle);
 // Endpoints Unificados
 //-----------------------------------------------------------------
 app.AddProductsEndPoints();
-app.AddCategoryEndPoints();
-app.AddOrderEndPoints();
+app.AddCategoriesEndPoints();
+app.AddOrdersEndPoints();
 
 
 //Alteracao de unificados para permitir teste integrado-------------
 app.AddTestableProductsEndPoints();
+app.AddTestableCategoriesEndPoints();
+app.AddTestableOrdersEndPoints();
 
 
 //--------------------------------------------------------------------------------

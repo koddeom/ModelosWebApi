@@ -16,13 +16,13 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
 
         public static void AddTestableProductsEndPoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("unified/testable/Product/{id:guid}", ProductGet).WithTags("Unified Product for test");
-            app.MapGet("unified/testableProduct", ProductGetAll).WithTags("Unified Product for test");
+            app.MapGet("unified/testable/Product/{id:guid}", FromModuleProductGet).WithTags("Unified Product for test");
+            app.MapGet("unified/testableProduct", FromModuleProductGetAll).WithTags("Unified Product for test");
 
-            app.MapPost("unified/testableProduct", ProductPost).WithTags("Unified Product for test");
-            app.MapPut("unified/testableProduct/{id:guid}", ProductPut).WithTags("Unified Product for test");
+            app.MapPost("unified/testableProduct", FromModuleProductPost).WithTags("Unified Product for test");
+            app.MapPut("unified/testableProduct/{id:guid}", FromModuleProductPut).WithTags("Unified Product for test");
 
-            app.MapDelete("unified/testableProduct/{id:guid}", ProductDelete).WithTags("Unified Product for test");
+            app.MapDelete("unified/testableProduct/{id:guid}", FromModuleProductDelete).WithTags("Unified Product for test");
 
             ////GetAllSold (Caso especial classe estatica não aceita injecao de dependencia de interface)
             //app.MapGet("unified/Product/sold", async (ServiceAllProductsSold serviceAllProductsSold) =>
@@ -36,7 +36,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
         // Endpoints
         //==============================================================================================
 
-        public static IActionResult ProductGet(Guid id, ApplicationDbContext dbContext)
+        public static IActionResult FromModuleProductGet(Guid id, ApplicationDbContext dbContext)
         {
             var products = dbContext.Products
                                    .Include(p => p.Category)
@@ -58,7 +58,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
             };
         }
 
-        public static async Task<IActionResult> ProductPost(ProductRequestDTO productRequestDTO,
+        public static async Task<IActionResult> FromModuleProductPost(ProductRequestDTO productRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
         {
@@ -95,7 +95,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
             };
         }
 
-        public static IActionResult ProductGetAll(ApplicationDbContext dbContext)
+        public static IActionResult FromModuleProductGetAll(ApplicationDbContext dbContext)
         {
             var products = dbContext.Products
                                   .AsNoTracking()
@@ -117,7 +117,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
             };
         }
 
-        public static async Task<IActionResult> ProductGetSold(IServiceAllProductsSold serviceAllProductsSold)
+        public static async Task<IActionResult> FromModuleProductGetSold(IServiceAllProductsSold serviceAllProductsSold)
         {
             var result2 = serviceAllProductsSold.Execute();
 
@@ -129,7 +129,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
             };
         }
 
-        public static IActionResult ProductPut(Guid id,
+        public static IActionResult FromModuleProductPut(Guid id,
                                                  ProductRequestDTO productRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
@@ -182,7 +182,7 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
             };
         }
 
-        public static IActionResult ProductDelete(Guid id, ApplicationDbContext dbContext)
+        public static IActionResult FromModuleProductDelete(Guid id, ApplicationDbContext dbContext)
         {
             //Recupero o produto do banco
             var product = dbContext.Products.FirstOrDefault(c => c.Id == id);
