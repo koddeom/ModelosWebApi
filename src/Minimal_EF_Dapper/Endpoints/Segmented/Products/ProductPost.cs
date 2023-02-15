@@ -15,7 +15,7 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         public static Delegate Handle => Action;
 
         //----------------------------------------------------------------------
-        //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
+        //Observacao: Task<IActionResult> Está trabalhando com uma operacao assincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
         public static async Task<IActionResult> Action(ProductRequestDTO productRequestDTO,

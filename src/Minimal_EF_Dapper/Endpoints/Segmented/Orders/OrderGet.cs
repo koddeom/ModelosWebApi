@@ -1,4 +1,5 @@
-﻿using Minimal_EF_Dapper.Domain.Database;
+﻿using Microsoft.AspNetCore.Mvc;
+using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Endpoints.DTO.Order;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -11,10 +12,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Orders
         public static Delegate Handle => Action;
 
         //----------------------------------------------------------------------
-        //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
+        //Observacao: Task<IActionResult> Está trabalhando com uma operacao assincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Order" })]
-        public static async Task<IResult> Action(Guid id,
+        public static async Task<IActionResult> Action(Guid id,
                                                  HttpContext http,
                                                  ApplicationDbContext context
                                                 )
@@ -32,7 +33,11 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Orders
                                                         productsResponseDTO
                                                         );
 
-            return Results.Ok(orderResponseDTO);
+            return new ObjectResult(orderResponseDTO)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+
         }
     }
 }

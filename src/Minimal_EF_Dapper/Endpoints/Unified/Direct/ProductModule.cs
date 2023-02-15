@@ -5,7 +5,7 @@ using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Domain.Database.Entities.Product;
 using Minimal_EF_Dapper.Endpoints.DTO.Product;
 
-namespace Minimal_EF_Dapper.Endpoints.Unified
+namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
 {
     public static class ProductModule
     {
@@ -50,13 +50,6 @@ namespace Minimal_EF_Dapper.Endpoints.Unified
 
                 return Results.Ok(productsResponseDTO);
             }).WithTags("Unified Product");
-
-            ////GetAllSold (Caso especial classe estatica não aceita injecao de dependencia de interface)
-            //app.MapGet("unified/Product/sold", async (ServiceAllProductsSold serviceAllProductsSold) =>
-            //{
-            //    var result = await serviceAllProductsSold.Execute();
-            //    return Results.Ok(result);
-            //}).WithTags("Unified Product");
 
             //Post
             app.MapPost("unified/Product", async (ProductRequestDTO productRequestDTO,
@@ -148,6 +141,15 @@ namespace Minimal_EF_Dapper.Endpoints.Unified
 
                 return Results.Ok();
             }).WithTags("Unified Product");
+
+
+            ////GetAllSold (Caso especial classe estatica não aceita injecao de dependencia de interface)
+            //app.MapGet("unified/Product/sold", async (ServiceAllProductsSold serviceAllProductsSold) =>
+            //{
+            //    var result = await serviceAllProductsSold.Execute();
+            //    return Results.Ok(result);
+            //}).WithTags("Unified Product");
+
         }
     }
 }

@@ -31,13 +31,17 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
         {
             // Arrange
 
-            var mockTotal = 1500;
+            var dummie_Total = 1500;
+            var dummie_CategoryId = Guid.NewGuid();
+            var dummie_ProductId1 = Guid.NewGuid();
+            var dummie_ProductId2 = Guid.NewGuid();
+
 
             // Crio um Dummie de input dos dados
             var mockOrderRequestDTO = new OrderRequestDTO(new List<Guid>
                 {
-                    Guid.NewGuid(),
-                    Guid.NewGuid(),
+                    dummie_ProductId1,
+                    dummie_ProductId2,
                 });
 
             //------------------------------------------------------------------------
@@ -46,7 +50,7 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
 
             var mockCategory = new Category
             {
-                Id = Guid.NewGuid(),
+                Id = dummie_CategoryId,
                 Name = "Category 1",
                 Active = true,
                 CreatedBy = "doe joe",
@@ -57,7 +61,7 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             {
                 new Product
                 {
-                    Id = Guid.NewGuid(),
+                    Id = dummie_ProductId1,
                     Name = "Product 1",
                     Description = "Description of product 1",
                     Price = 10.0m,
@@ -68,7 +72,7 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
                 },
                 new Product
                 {
-                    Id = Guid.NewGuid(),
+                    Id = dummie_ProductId2,
                     Name = "Product 2",
                     Description = "Description of product 2",
                     Price = 20.0m,
@@ -85,7 +89,7 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
                 ClientId = "Client1",
                 ClientName = "Client Name 1",
                 Products = mockProducts,
-                Total = mockTotal,
+                Total = dummie_Total,
                 CreatedBy = "doe joe",
                 CreatedOn = DateTime.Now
             };
@@ -135,13 +139,18 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
         public async Task OrderPost_Error_ProductsNotFound()
         {
             // Arrange
-            var mockTotal = 1500;
+
+            var dummie_Total = 1500;
+            var dummie_CategoryId = Guid.NewGuid();
+            var dummie_ProductId1 = Guid.NewGuid();
+            var dummie_ProductId2 = Guid.NewGuid();
+
 
             // Crio um Dummie de input dos dados
             var mockOrderRequestDTO = new OrderRequestDTO(new List<Guid>
                 {
-                    Guid.NewGuid(),
-                    Guid.NewGuid(),
+                    dummie_ProductId1,
+                    dummie_ProductId2,
                 });
 
             //------------------------------------------------------------------------
@@ -150,23 +159,23 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
 
             var mockCategory = new Category
             {
-                Id = Guid.NewGuid(),
+                Id = dummie_CategoryId,
                 Name = "Category 1",
                 Active = true,
                 CreatedBy = "doe joe",
                 CreatedOn = DateTime.Now
             };
 
+            //Mock com erro, products = null
             var mockProducts = new List<Product>();
-
-            //Mock com erro, nome  = null
+                        
             var mockOrder = new Order
             {
                 Id = Guid.NewGuid(),
                 ClientId = "Cod-2344",
                 ClientName = "Doe Joe",
                 Products = mockProducts,
-                Total = mockTotal,
+                Total = dummie_Total,
                 CreatedBy = "doe joe",
                 CreatedOn = DateTime.Now
             };

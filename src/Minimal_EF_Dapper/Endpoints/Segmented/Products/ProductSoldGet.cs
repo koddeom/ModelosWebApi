@@ -19,16 +19,20 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         }
 
         //----------------------------------------------------------------------
-        //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
+        //Observacao: Task<IActionResult> Está trabalhando com uma operacao assincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
-        public static async Task<IResult> Action([FromServices] IServiceAllProductsSold serviceAllProductsSold)
+        public static async Task<IActionResult> Action([FromServices] IServiceAllProductsSold serviceAllProductsSold)
         {
             var result2 = serviceAllProductsSold.Execute();
 
             var result = await serviceAllProductsSold.Execute();
 
-            return Results.Ok(result);
+            return new ObjectResult(Results.Ok)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+
         }
     }
 }

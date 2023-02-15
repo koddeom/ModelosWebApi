@@ -1,4 +1,5 @@
-﻿using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
+﻿using Microsoft.AspNetCore.Mvc;
+using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
 using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Domain.Database.Entities.Product;
 using Minimal_EF_Dapper.Endpoints.DTO.Category;
@@ -13,10 +14,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
         public static Delegate Handle => Action;
 
         //----------------------------------------------------------------------
-        //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
+        //Observacao: Task<IActionResult> Está trabalhando com uma operacao assincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
-        public static async Task<IResult> Action(CategoryRequestDTO categoryRequestDTO,
+        public static async Task<IActionResult> Action(CategoryRequestDTO categoryRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
         {
@@ -30,13 +31,21 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
 
             if (!category.IsValid)
             {
-                return Results.ValidationProblem(category.Notifications.ConvertToErrorDetails());
+                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             await dbContext.Categories.AddAsync(category);
             dbContext.SaveChanges();
 
-            return Results.Created($"/categories/{category.Id}", category.Id);
+            return new ObjectResult(Results.Created($"/categories/{category.Id}", category.Id))
+            {
+                StatusCode = StatusCodes.Status201Created
+            };
+
+
         }
     }
 }

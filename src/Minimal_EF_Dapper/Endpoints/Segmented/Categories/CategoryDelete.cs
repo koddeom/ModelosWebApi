@@ -13,20 +13,27 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
         //-----------------------------------------------------------------------
 
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
-        public static IResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
+        public static IActionResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
         {
             //Recupero o produto do banco
             var category = dbContext.Categories.FirstOrDefault(c => c.Id == id);
 
             if (category == null)
             {
-                return Results.NotFound();
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             dbContext.Categories.Remove(category);
             dbContext.SaveChanges();
 
-            return Results.Ok();
+            return new ObjectResult(Results.Ok)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+
         }
     }
 }

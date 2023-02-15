@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Endpoints.DTO.Product;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,10 +13,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         public static Delegate Handle => PAction;
 
         //---------------------------------------------------------------------
-        //Observacao: IResult está trabalhando com uma operacao sincrona
+        //Observacao: IActionResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
-        public static IResult PAction(ApplicationDbContext dbContext)
+        public static IActionResult PAction(ApplicationDbContext dbContext)
         {
             var products = dbContext.Products
                                   .AsNoTracking()
@@ -31,7 +32,11 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
                                                         p.Active
                                                      ));
 
-            return Results.Ok(productsResponseDTO);
+            return new ObjectResult(productsResponseDTO)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+
         }
     }
 }

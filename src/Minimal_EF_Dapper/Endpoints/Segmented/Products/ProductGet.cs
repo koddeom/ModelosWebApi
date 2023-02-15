@@ -14,10 +14,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
         public static Delegate Handle => Action;
 
         //-----------------------------------------------------------------------
-        //Observacao: IResult está trabalhando com uma operacao sincrona
+        //Observacao: IActionResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Product" })]
-        public static IResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
+        public static IActionResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
         {
             var products = dbContext.Products
                                    .Include(p => p.Category)
@@ -33,7 +33,11 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Products
                                                         p.Active
                                                      ));
 
-            return Results.Ok(productResponseDTO);
+            return new ObjectResult(productResponseDTO)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+
         }
     }
 }

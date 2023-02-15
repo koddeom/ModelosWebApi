@@ -13,10 +13,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
         public static Delegate Handle => Action;
 
         //-----------------------------------------------------------------------
-        //Observacao: IResult está trabalhando com uma operacao sincrona
+        //Observacao: IActionResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
-        public static IResult Action([FromRoute] Guid id,
+        public static IActionResult Action([FromRoute] Guid id,
                                                  CategoryRequestDTO categoryRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
@@ -28,7 +28,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
 
             if (category == null)
             {
-                return Results.NotFound();
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             category.EditInfo(categoryRequestDTO.Name,
@@ -37,13 +40,18 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
 
             if (!category.IsValid)
             {
-                return Results.ValidationProblem(category.Notifications
-                                                         .ConvertToErrorDetails());
+                return new ObjectResult(Results.ValidationProblem(category.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
             }
 
             dbContext.SaveChanges();
 
-            return Results.Ok();
+            return new ObjectResult(Results.Ok)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }

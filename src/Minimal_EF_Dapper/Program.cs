@@ -7,7 +7,7 @@ using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Endpoints.Segmented.Categories;
 using Minimal_EF_Dapper.Endpoints.Segmented.Orders;
 using Minimal_EF_Dapper.Endpoints.Segmented.Products;
-using Minimal_EF_Dapper.Endpoints.Unified;
+using Minimal_EF_Dapper.Endpoints.Unified.Direct;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -51,6 +51,7 @@ builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration["Datab
 builder.Services.AddMvc();
 
 builder.Services.AddEndpointsApiExplorer();
+
 
 //--------------------------------------------------------------------------------------------------
 //Meus servicos personalizados da aplicacao
@@ -117,6 +118,11 @@ app.MapMethods(OrderGet.Template, OrderGet.Methods, OrderGet.Handle);
 app.AddProductsEndPoints();
 app.AddCategoryEndPoints();
 app.AddOrderEndPoints();
+
+
+//Alteracao de unificados para permitir teste integrado-------------
+app.AddTestableProductsEndPoints();
+
 
 //--------------------------------------------------------------------------------
 //GetAllSold

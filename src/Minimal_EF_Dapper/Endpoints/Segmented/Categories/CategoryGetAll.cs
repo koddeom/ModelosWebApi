@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Endpoints.DTO.Category;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,10 +13,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
         public static Delegate Handle => Action;
 
         //-----------------------------------------------------------------------
-        //Observacao: IResult está trabalhando com uma operacao sincrona
+        //Observacao: IActionResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
-        public static IResult Action(ApplicationDbContext dbContext)
+        public static IActionResult Action(ApplicationDbContext dbContext)
         {
             var categories = dbContext.Categories
                                       .AsNoTracking()
@@ -27,8 +28,13 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
                 c.Name,
                 c.Active
             ));
+           
 
-            return Results.Ok(categoriesResponseDTO);
+            return new ObjectResult(categoriesResponseDTO)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
+
         }
     }
 }

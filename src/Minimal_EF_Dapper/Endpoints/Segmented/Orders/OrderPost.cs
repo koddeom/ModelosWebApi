@@ -1,4 +1,5 @@
-﻿using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
+﻿using Microsoft.AspNetCore.Mvc;
+using Minimal_EF_Dapper.AppDomain.Extensions.ErroDetailedExtension;
 using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Domain.Database.Entities.Product;
 using Minimal_EF_Dapper.Endpoints.DTO.Order;
@@ -13,10 +14,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Orders
         public static Delegate Handle => Action;
 
         //----------------------------------------------------------------------
-        //Observacao: Task<IResult> Está trabalhando com uma operacao assincrona
+        //Observacao: Task<IActionResult> Está trabalhando com uma operacao assincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Order" })]
-        public static async Task<IResult> Action(OrderRequestDTO orderRequestDTO,
+        public static async Task<IActionResult> Action(OrderRequestDTO orderRequestDTO,
                                                  HttpContext http,
                                                  ApplicationDbContext dbContext)
         {
@@ -33,9 +34,12 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Orders
                 orderProducts = dbContext.Products.Where(p => orderRequestDTO.ProductListIds
                                                                            .Contains(p.Id))
                                                                            .ToList();
-            if (orderProducts == null)
+            if (orderProducts == null || orderProducts.Count == 0)
             {
-                return Results.NotFound();
+                return new ObjectResult(Results.NotFound())
+                {
+                    StatusCode = StatusCodes.Status404NotFound
+                };
             }
 
             var order = new Order();
@@ -43,14 +47,18 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Orders
             order.AddOrder(userId, userName, orderProducts);
 
             if (!order.IsValid)
-            {
-                return Results.ValidationProblem(order.Notifications.ConvertToErrorDetails());
-            }
+                return new ObjectResult(Results.ValidationProblem(order.Notifications.ConvertToErrorDetails()))
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
 
             await dbContext.Orders.AddAsync(order);
             await dbContext.SaveChangesAsync();
 
-            return Results.Created($"/orders/{order.Id}", order.Id);
+            return new ObjectResult(Results.Created($"/orders/{order.Id}", order.Id))
+            {
+                StatusCode = StatusCodes.Status201Created
+            };
         }
     }
 }

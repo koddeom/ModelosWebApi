@@ -13,10 +13,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
         public static Delegate Handle => Action;
 
         //-----------------------------------------------------------------------
-        //Observacao: IResult está trabalhando com uma operacao sincrona
+        //Observacao: IActionResult está trabalhando com uma operacao sincrona
 
         [SwaggerOperation(Tags = new[] { "Segmented Category" })]
-        public static IResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
+        public static IActionResult Action([FromRoute] Guid id, ApplicationDbContext dbContext)
         {
             var Categorys = dbContext.Categories
                                      .AsNoTracking()
@@ -28,7 +28,10 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
                                                         p.Active
                                                      ));
 
-            return Results.Ok(categoryResponseDTO);
+            return new ObjectResult(categoryResponseDTO)
+            {
+                StatusCode = StatusCodes.Status200OK
+            };
         }
     }
 }

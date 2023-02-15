@@ -10,14 +10,20 @@ namespace Minimal_EF_Dapper_XunitTest
 {
     public class ProductDeleteTests
     {
+        private readonly ApplicationDbContext _dbContextMock;
+        private readonly HttpContext _httpContextMock;
+
+        public ProductDeleteTests()
+        {
+            // Configura o mock dos contextos
+            _dbContextMock = Substitute.For<ApplicationDbContext>();
+            _httpContextMock = Substitute.For<HttpContext>();
+        }
+
         [Fact]
         public void ProductDelete_DeletedWithSucess()
         {
             // Arrange
-
-            // Contextos
-            var httpContextMock = Substitute.For<HttpContext>();
-            var dbContextMock = Substitute.For<ApplicationDbContext>();
 
             //Dados
             var dummie_ProductId = Guid.NewGuid();
@@ -53,11 +59,11 @@ namespace Minimal_EF_Dapper_XunitTest
             var mockProductsQueryable = mockProducts.AsQueryable().BuildMockDbSet();
 
             //3- Digo qual sera o retorno do retorno do DbSet<Category>
-            dbContextMock.Products.Returns(mockProductsQueryable);
-            dbContextMock.Categories.Returns(mockCategoriesQueryable);
+            _dbContextMock.Products.Returns(mockProductsQueryable);
+            _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = ProductDelete.Action(dummie_ProductId, dbContextMock);
+            var result = ProductDelete.Action(dummie_ProductId, _dbContextMock);
             // Assert
             var ObjectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status200OK, ObjectResult.StatusCode);
@@ -67,10 +73,6 @@ namespace Minimal_EF_Dapper_XunitTest
         public void ProductDelete_NotFound()
         {
             // Arrange
-
-            // Contextos
-            var httpContextMock = Substitute.For<HttpContext>();
-            var dbContextMock = Substitute.For<ApplicationDbContext>();
 
             //Dados
             var dummie_ProductId = Guid.NewGuid();
@@ -106,11 +108,12 @@ namespace Minimal_EF_Dapper_XunitTest
             var mockProductsQueryable = mockProducts.AsQueryable().BuildMockDbSet();
 
             //3- Digo qual sera o retorno do retorno do DbSet<Category>
-            dbContextMock.Products.Returns(mockProductsQueryable);
-            dbContextMock.Categories.Returns(mockCategoriesQueryable);
+            _dbContextMock.Products.Returns(mockProductsQueryable);
+            _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act
-            var result = ProductDelete.Action(dummie_ProductId, dbContextMock);
+            var result = ProductDelete.Action(dummie_ProductId, _dbContextMock);
+
             // Assert
             var ObjectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status404NotFound, ObjectResult.StatusCode);

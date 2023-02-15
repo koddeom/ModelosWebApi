@@ -51,14 +51,20 @@ namespace Minimal_EF_Dapper_XunitTest
 
     public class ProductPostTests
     {
+        private readonly ApplicationDbContext _dbContextMock;
+        private readonly HttpContext _httpContextMock;
+
+        public ProductPostTests()
+        {
+            // Configura o mock dos contextos
+            _dbContextMock = Substitute.For<ApplicationDbContext>();
+            _httpContextMock = Substitute.For<HttpContext>();
+        }
+
         [Fact]
         public async Task ProductPost_CreatedWithSucess()
         {
             // Arrange --------------------------------------------------------------------------------------------------
-
-            // Mock dos contextos
-            var dbContextMock = Substitute.For<ApplicationDbContext>();
-            var httpContextMock = Substitute.For<HttpContext>();
 
             // Mock dos dados
             var dummie_CategoryId = Guid.NewGuid();
@@ -87,10 +93,10 @@ namespace Minimal_EF_Dapper_XunitTest
             var mockCategoriesQueryable = mockCategories.AsQueryable().BuildMockDbSet();
 
             //3- Digo qual sera o retorno do retorno do DbSet<Category>
-            dbContextMock.Categories.Returns(mockCategoriesQueryable);
+            _dbContextMock.Categories.Returns(mockCategoriesQueryable);
 
             // Act ----------------------------------------------------------------------------------------------------
-            var result = await ProductPost.Action(mockProductRequestDTO, httpContextMock, dbContextMock);
+            var result = await ProductPost.Action(mockProductRequestDTO, _httpContextMock, _dbContextMock);
 
             var objectResponse = (ObjectResult)result;
 
@@ -102,10 +108,6 @@ namespace Minimal_EF_Dapper_XunitTest
         [Fact]
         public async Task ProductPost_ReturnError_PriceZero()
         {
-            // Arrange
-            var dbContextMock = Substitute.For<ApplicationDbContext>();
-            var httpContextMock = Substitute.For<HttpContext>();
-
             var dummie_CategoryId = Guid.NewGuid();
             var mockProductRequestDTO = new ProductRequestDTO
             {
@@ -125,10 +127,10 @@ namespace Minimal_EF_Dapper_XunitTest
             // Mockando o DbSet<Category> com MockQueryable.NSubstitute
             var categoryList = new List<Category> { mockCategory };
             var categoryQueryable = categoryList.AsQueryable().BuildMockDbSet();
-            dbContextMock.Categories.Returns(categoryQueryable);
+            _dbContextMock.Categories.Returns(categoryQueryable);
 
             // Act
-            var result = await ProductPost.Action(mockProductRequestDTO, httpContextMock, dbContextMock);
+            var result = await ProductPost.Action(mockProductRequestDTO, _httpContextMock, _dbContextMock);
 
             // Assert
             var ObjectResult = Assert.IsType<ObjectResult>(result);

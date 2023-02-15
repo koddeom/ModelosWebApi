@@ -4,7 +4,7 @@ using Minimal_EF_Dapper.Domain.Database;
 using Minimal_EF_Dapper.Domain.Database.Entities.Product;
 using Minimal_EF_Dapper.Endpoints.DTO.Order;
 
-namespace Minimal_EF_Dapper.Endpoints.Unified
+namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
 {
     public static class OrderModule
     {
