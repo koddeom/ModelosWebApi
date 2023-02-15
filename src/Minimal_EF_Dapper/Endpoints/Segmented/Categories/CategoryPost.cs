@@ -44,8 +44,6 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
             {
                 StatusCode = StatusCodes.Status201Created
             };
-
-
         }
     }
 }

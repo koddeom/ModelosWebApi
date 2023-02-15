@@ -36,7 +36,6 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var dummie_ProductId1 = Guid.NewGuid();
             var dummie_ProductId2 = Guid.NewGuid();
 
-
             // Crio um Dummie de input dos dados
             var mockOrderRequestDTO = new OrderRequestDTO(new List<Guid>
                 {
@@ -145,7 +144,6 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
             var dummie_ProductId1 = Guid.NewGuid();
             var dummie_ProductId2 = Guid.NewGuid();
 
-
             // Crio um Dummie de input dos dados
             var mockOrderRequestDTO = new OrderRequestDTO(new List<Guid>
                 {
@@ -168,7 +166,7 @@ namespace Controller_EF_Dapper_Repository_UnitOfWork_XunitTest
 
             //Mock com erro, products = null
             var mockProducts = new List<Product>();
-                        
+
             var mockOrder = new Order
             {
                 Id = Guid.NewGuid(),

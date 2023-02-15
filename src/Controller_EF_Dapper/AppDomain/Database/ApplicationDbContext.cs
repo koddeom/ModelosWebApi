@@ -1,6 +1,6 @@
-﻿using Flunt.Notifications;
+﻿using Controler_EF_Dapper.Domain.Database.Entities.Product;
+using Flunt.Notifications;
 using Microsoft.EntityFrameworkCore;
-using Controler_EF_Dapper.Domain.Database.Entities.Product;
 
 namespace Controler_EF_Dapper.Domain.Database
 {

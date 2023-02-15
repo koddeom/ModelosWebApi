@@ -139,7 +139,7 @@ namespace Minimal_EF_Dapper_XunitTest
 
             //Mock com erro, products = null
             var mockProducts = new List<Product>();
-            
+
             var mockOrder = new Order
             {
                 Id = Guid.NewGuid(),

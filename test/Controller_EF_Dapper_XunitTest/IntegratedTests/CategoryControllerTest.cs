@@ -172,7 +172,7 @@ namespace Controller_EF_Dapper_XunitTest
 
             // Act
             var result = _categoryControllerMock.CategoryPut(dummie_CategoryId, mockCategoryRequestDTO);
-            
+
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
@@ -284,6 +284,5 @@ namespace Controller_EF_Dapper_XunitTest
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         }
-
     }
 }

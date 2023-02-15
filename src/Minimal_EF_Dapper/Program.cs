@@ -52,7 +52,6 @@ builder.Services.AddMvc();
 
 builder.Services.AddEndpointsApiExplorer();
 
-
 //--------------------------------------------------------------------------------------------------
 //Meus servicos personalizados da aplicacao
 //--------------------------------------------------------------------------------------------------
@@ -119,12 +118,10 @@ app.AddProductsEndPoints();
 app.AddCategoriesEndPoints();
 app.AddOrdersEndPoints();
 
-
 //Alteracao de unificados para permitir teste integrado-------------
 app.AddTestableProductsEndPoints();
 app.AddTestableCategoriesEndPoints();
 app.AddTestableOrdersEndPoints();
-
 
 //--------------------------------------------------------------------------------
 //GetAllSold

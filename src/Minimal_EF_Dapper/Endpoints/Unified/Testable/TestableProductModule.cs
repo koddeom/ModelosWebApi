@@ -210,6 +210,5 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
         //        {
         //            _serviceAllProductsSold = serviceAllProductsSold;
         //        }
-
     }
 }

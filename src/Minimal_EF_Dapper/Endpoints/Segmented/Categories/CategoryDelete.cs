@@ -33,7 +33,6 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
             {
                 StatusCode = StatusCodes.Status200OK
             };
-
         }
     }
 }

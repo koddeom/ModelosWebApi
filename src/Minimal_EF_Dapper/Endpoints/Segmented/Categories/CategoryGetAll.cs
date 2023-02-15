@@ -28,13 +28,11 @@ namespace Minimal_EF_Dapper.Endpoints.Segmented.Categories
                 c.Name,
                 c.Active
             ));
-           
 
             return new ObjectResult(categoriesResponseDTO)
             {
                 StatusCode = StatusCodes.Status200OK
             };
-
         }
     }
 }

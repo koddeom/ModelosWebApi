@@ -142,14 +142,12 @@ namespace Minimal_EF_Dapper.Endpoints.Unified.Direct
                 return Results.Ok();
             }).WithTags("Unified Product");
 
-
             ////GetAllSold (Caso especial classe estatica não aceita injecao de dependencia de interface)
             //app.MapGet("unified/Product/sold", async (ServiceAllProductsSold serviceAllProductsSold) =>
             //{
             //    var result = await serviceAllProductsSold.Execute();
             //    return Results.Ok(result);
             //}).WithTags("Unified Product");
-
         }
     }
 }

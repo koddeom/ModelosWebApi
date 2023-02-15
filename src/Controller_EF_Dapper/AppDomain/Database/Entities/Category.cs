@@ -1,5 +1,5 @@
-﻿using Flunt.Validations;
-using Controler_EF_Dapper.Domain.Database.BaseEntity;
+﻿using Controler_EF_Dapper.Domain.Database.BaseEntity;
+using Flunt.Validations;
 
 namespace Controler_EF_Dapper.Domain.Database.Entities.Product
 {
